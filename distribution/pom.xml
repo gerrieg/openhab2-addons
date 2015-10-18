@@ -135,12 +135,16 @@
             <artifactId>org.openhab.binding.vitotronic</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.openhab.addons.io</groupId>
             <artifactId>org.openhab.io.myopenhab</artifactId>
             <version>${project.version}</version>
         </dependency>    	
+        <dependency>
+            <groupId>org.openhab.binding</groupId>
+            <artifactId>org.openhab.binding.homematic</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.eclipse.smarthome.binding</groupId>
@@ -217,11 +221,6 @@
         <dependency>
             <groupId>org.openhab.binding</groupId>
             <artifactId>org.openhab.binding.heatmiser</artifactId>
-            <version>${oh1.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openhab.binding</groupId>
-            <artifactId>org.openhab.binding.homematic</artifactId>
             <version>${oh1.version}</version>
         </dependency>
         <dependency>
