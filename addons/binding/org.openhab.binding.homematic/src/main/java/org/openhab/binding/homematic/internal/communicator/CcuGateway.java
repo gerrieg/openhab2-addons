@@ -15,19 +15,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.SimpleHttpConnectionManager;
-import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.util.StringContentProvider;
+import org.eclipse.jetty.http.HttpHeader;
 import org.openhab.binding.homematic.internal.common.HomematicConfig;
 import org.openhab.binding.homematic.internal.communicator.client.UnknownRpcFailureException;
 import org.openhab.binding.homematic.internal.communicator.parser.CcuLoadDeviceNamesParser;
@@ -69,12 +68,13 @@ public class CcuGateway extends AbstractHomematicGateway {
 
         tclregaScripts = loadTclRegaScripts();
 
-        httpClient = new HttpClient(new SimpleHttpConnectionManager(true));
-        HttpClientParams params = httpClient.getParams();
-        Long timeout = config.getTimeout() * 1000L;
-        params.setConnectionManagerTimeout(timeout);
-        params.setSoTimeout(timeout.intValue());
-        params.setContentCharset(config.getEncoding());
+        httpClient = new HttpClient();
+        httpClient.setConnectTimeout(config.getTimeout() * 1000L);
+        try {
+            httpClient.start();
+        } catch (Exception ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -84,7 +84,14 @@ public class CcuGateway extends AbstractHomematicGateway {
     protected void stopClient() {
         super.stopClient();
         tclregaScripts = null;
-        httpClient = null;
+        if (httpClient != null) {
+            try {
+                httpClient.stop();
+            } catch (Exception e) {
+                // ignore
+            }
+            httpClient = null;
+        }
     }
 
     /**
@@ -198,7 +205,6 @@ public class CcuGateway extends AbstractHomematicGateway {
      */
     @SuppressWarnings("unchecked")
     private synchronized <T> T sendScript(String script, Class<T> clazz) throws IOException {
-        PostMethod post = null;
         try {
             script = StringUtils.trim(script);
             if (StringUtils.isEmpty(script)) {
@@ -208,12 +214,12 @@ public class CcuGateway extends AbstractHomematicGateway {
                 logger.trace("TclRegaScript: {}", script);
             }
 
-            post = new PostMethod(config.getTclRegaUrl());
-            RequestEntity re = new ByteArrayRequestEntity(script.getBytes(config.getEncoding()));
-            post.setRequestEntity(re);
-            httpClient.executeMethod(post);
+            StringContentProvider content = new StringContentProvider(script, config.getEncoding());
+            ContentResponse response = httpClient.POST(config.getTclRegaUrl()).content(content)
+                    .timeout(config.getTimeout(), TimeUnit.SECONDS)
+                    .header(HttpHeader.CONTENT_TYPE, "text/plain;charset=" + config.getEncoding()).send();
 
-            String result = post.getResponseBodyAsString();
+            String result = new String(response.getContent(), config.getEncoding());
             result = StringUtils.substringBeforeLast(result, "<xml><exec>");
             if (TRACE_ENABLED) {
                 logger.trace("Result TclRegaScript: {}", result);
@@ -223,10 +229,6 @@ public class CcuGateway extends AbstractHomematicGateway {
             return (T) um.unmarshal(new StringReader(result));
         } catch (Exception ex) {
             throw new IOException(ex.getMessage(), ex);
-        } finally {
-            if (post != null) {
-                post.releaseConnection();
-            }
         }
     }
 
