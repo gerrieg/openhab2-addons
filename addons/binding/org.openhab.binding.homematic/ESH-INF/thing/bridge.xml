@@ -31,7 +31,7 @@
 			</parameter>
 			<parameter name="callbackPort" type="integer">
 				<label>Callback Port</label>
-				<description>Callback port of the openHAB server, default with 9125 and counts up for each additional bridge</description>
+				<description>Callback port of the openHAB server. If no value is specified, callbackPort starts with 9125 and counts up for each additional bridge</description>
 			</parameter>
 			<parameter name="aliveInterval" type="integer">
 				<label>Alive Interval</label>
