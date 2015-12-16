@@ -85,7 +85,6 @@ public class HomematicBridgeHandler extends BaseBridgeHandler implements Homemat
 
         } catch (IOException ex) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ex.getMessage());
-            logger.error(ex.getMessage(), ex);
             dispose();
             scheduleReinitialize();
         }
