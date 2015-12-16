@@ -123,7 +123,7 @@ public class HomematicBridgeHandler extends BaseBridgeHandler implements Homemat
     }
 
     /**
-     * Registers the DeviceDisoveryService.
+     * Registers the DeviceDiscoveryService.
      */
     private void registerDeviceDiscoveryService() {
         logger.trace("Registering HomematicDeviceDiscoveryService for bridge '{}'", getThing().getUID().getId());
