@@ -132,7 +132,6 @@ public class HomematicDeviceDiscoveryService extends AbstractDiscoveryService {
                 @Override
                 public void run() {
                     try {
-                        removeOlderResults(getTimestampOfLastScan());
                         bridgeHandler.getGateway().loadAllDeviceMetadata();
                         bridgeHandler.getTypeGenerator().validateFirmwares();
                         logger.debug("Finished Homematic device discovery scan on gateway '{}'",
@@ -142,6 +141,7 @@ public class HomematicDeviceDiscoveryService extends AbstractDiscoveryService {
                     } finally {
                         scanFuture = null;
                         bridgeHandler.setOfflineStatus();
+                        removeOlderResults(getTimestampOfLastScan());
                     }
                 }
             });
