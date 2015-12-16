@@ -232,13 +232,3 @@ A device may return this failure while fetching the datapoint values. I've teste
 Fetching values is only done at startup or if you trigger the RELOAD_FROM_GATEWAY virtual datapoint. I hope this will be fixed in one of the next CCU firmwares.  
 With [Homegear](https://www.homegear.eu) everything works as expected.
 
-### Debugging and Tracing
-
-If you want to see what's going on in the binding, switch the loglevel in logback.xml to DEBUG.
-```
-<logger name="org.openhab.binding.homematic" level="DEBUG" />
-```
-If you want to see even more, switch to TRACE to also see the gateway request/response data.
-```
-<logger name="org.openhab.binding.homematic" level="TRACE" />
-```
