@@ -15,7 +15,6 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
-import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
 import org.openhab.binding.homematic.type.HomematicTypeGenerator;
 
 /**
@@ -25,7 +24,6 @@ import org.openhab.binding.homematic.type.HomematicTypeGenerator;
  */
 public class HomematicThingHandlerFactory extends BaseThingHandlerFactory {
     private HomematicTypeGenerator typeGenerator;
-    private ItemChannelLinkRegistry itemChannelLinkRegistry;
 
     protected void setTypeGenerator(HomematicTypeGenerator typeGenerator) {
         this.typeGenerator = typeGenerator;
@@ -33,14 +31,6 @@ public class HomematicThingHandlerFactory extends BaseThingHandlerFactory {
 
     protected void unsetTypeGenerator(HomematicTypeGenerator typeGenerator) {
         this.typeGenerator = null;
-    }
-
-    protected void setItemChannelLinkRegistry(ItemChannelLinkRegistry itemChannelLinkRegistry) {
-        this.itemChannelLinkRegistry = itemChannelLinkRegistry;
-    }
-
-    protected void unsetItemChannelLinkRegistry(ItemChannelLinkRegistry itemChannelLinkRegistry) {
-        this.itemChannelLinkRegistry = null;
     }
 
     /**
@@ -59,7 +49,7 @@ public class HomematicThingHandlerFactory extends BaseThingHandlerFactory {
         if (THING_TYPE_BRIDGE.equals(thing.getThingTypeUID())) {
             return new HomematicBridgeHandler((Bridge) thing, typeGenerator);
         } else {
-            return new HomematicThingHandler(thing, itemChannelLinkRegistry);
+            return new HomematicThingHandler(thing);
         }
     }
 

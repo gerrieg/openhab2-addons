@@ -14,6 +14,5 @@
    </service>
 
    <reference bind="setTypeGenerator" cardinality="1..1" interface="org.openhab.binding.homematic.type.HomematicTypeGenerator" name="TypeGenerator" policy="static" unbind="unsetTypeGenerator"/>
-   <reference bind="setItemChannelLinkRegistry" cardinality="1..1" interface="org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry" name="ItemChannelLinkRegistry" policy="static" unbind="unsetItemChannelLinkRegistry"/>
 
 </scr:component>

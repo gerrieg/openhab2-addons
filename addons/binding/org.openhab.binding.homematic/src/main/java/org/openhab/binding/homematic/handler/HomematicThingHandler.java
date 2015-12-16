@@ -21,7 +21,6 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
-import org.eclipse.smarthome.core.thing.link.ItemChannelLinkRegistry;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.eclipse.smarthome.core.types.State;
@@ -49,11 +48,8 @@ public class HomematicThingHandler extends BaseThingHandler {
     private static final String[] STATUS_DATAPOINT_NAMES = new String[] { DATAPOINT_NAME_UNREACH,
             DATAPOINT_NAME_CONFIG_PENDING, DATAPOINT_NAME_DEVICE_IN_BOOTLOADER };
 
-    private ItemChannelLinkRegistry itemChannelLinkRegistry;
-
-    public HomematicThingHandler(Thing thing, ItemChannelLinkRegistry itemChannelLinkRegistry) {
+    public HomematicThingHandler(Thing thing) {
         super(thing);
-        this.itemChannelLinkRegistry = itemChannelLinkRegistry;
     }
 
     /**
@@ -255,7 +251,7 @@ public class HomematicThingHandler extends BaseThingHandler {
      * Returns true, if the channel is linked at least to one item.
      */
     private boolean isLinked(Channel channel) {
-        return channel != null && !itemChannelLinkRegistry.getLinkedItems(channel.getUID()).isEmpty();
+        return channel != null && super.isLinked(channel.getUID().getId());
     }
 
     /**
