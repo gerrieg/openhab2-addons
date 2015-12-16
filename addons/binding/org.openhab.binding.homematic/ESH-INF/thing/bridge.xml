@@ -16,7 +16,7 @@
 			</parameter>
 			<parameter name="gatewayType" type="text">
 				<label>Gateway Type</label>
-				<description>Hint for the binding to identify the gateway type (default = auto)</description>
+				<description>Hint for the binding to identify the gateway type</description>
 				<limitToOptions>true</limitToOptions>
 				<default>auto</default>
 				<options>
@@ -31,43 +31,50 @@
 			</parameter>
 			<parameter name="callbackPort" type="integer">
 				<label>Callback Port</label>
-				<description>Callback port of the openHAB server, default is 9125 and counts up for each additional bridge</description>
+				<description>Callback port of the openHAB server, default with 9125 and counts up for each additional bridge</description>
 			</parameter>
 			<parameter name="aliveInterval" type="integer">
 				<label>Alive Interval</label>
 				<description>The interval in seconds to check if the communication with the Homematic gateway is still alive. 
-				If no message receives from the Homematic gateway, the RPC server restarts (default = 300)</description>
+				If no message receives from the Homematic gateway, the RPC server restarts</description>
 				<advanced>true</advanced>
+                <default>300</default>
 			</parameter>
 			<parameter name="reconnectInterval" type="integer">
 				<label>Reconnect Interval</label>
-				<description>The interval in seconds to force a reconnect to the Homematic gateway, disables Alive Interval! (0 = disabled, default = disabled)</description>
+				<description>The interval in seconds to force a reconnect to the Homematic gateway, disables Alive Interval! (0 = disabled)</description>
 				<advanced>true</advanced>
+                <default>0</default>
 			</parameter>
 			<parameter name="timeout" type="integer">
 				<label>Timeout</label>
-				<description>The timeout in seconds for connections to a Homematic gateway (default = 15)</description>
+				<description>The timeout in seconds for connections to a Homematic gateway</description>
 				<advanced>true</advanced>
+                <default>15</default>
 			</parameter>
 			<parameter name="socketMaxAlive" type="integer">
 				<label>Socket maxAlive</label>
 				<description>The maximum lifetime of a pooled socket connection to the Homematic gateway in seconds (default = 900)</description>
 				<advanced>true</advanced>
+                <default>900</default>
 			</parameter>
 			<parameter name="rfPort" type="integer">
 				<label>RF port</label>
-				<description>The port number of the RF daemon (default = 2001)</description>
+				<description>The port number of the RF daemon</description>
 				<advanced>true</advanced>
+                <default>2001</default>
 			</parameter>
 			<parameter name="wiredPort" type="integer">
 				<label>Wired port</label>
-				<description>The port number of the HS485 daemon (default = 2000)</description>
+				<description>The port number of the HS485 daemon</description>
 				<advanced>true</advanced>
+                <default>2000</default>
 			</parameter>
 			<parameter name="cuxdPort" type="integer">
 				<label>CUxD port</label>
-				<description>The port number of the CUxD daemon (default = 8701)</description>
+				<description>The port number of the CUxD daemon</description>
 				<advanced>true</advanced>
+                <default>8701</default>
 			</parameter>
 
 		</config-description>
