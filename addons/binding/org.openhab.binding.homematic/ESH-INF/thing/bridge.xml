@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="homematic"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<thing:thing-descriptions bindingId="homematic" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
@@ -15,16 +14,16 @@
 				<label>Gateway Address</label>
 				<description>Network address of the Homematic gateway</description>
 			</parameter>
-            <parameter name="gatewayType" type="text">
-                 <label>Gateway Type</label>
-                 <description>Hint for the binding to identify the gateway type (default = auto)</description>
-                 <limitToOptions>true</limitToOptions>
-                 <default>auto</default>
-                 <options>
-                     <option value="auto">Auto</option>
-                     <option value="ccu">CCU</option>
-                 </options>
-            </parameter>
+			<parameter name="gatewayType" type="text">
+				<label>Gateway Type</label>
+				<description>Hint for the binding to identify the gateway type (default = auto)</description>
+				<limitToOptions>true</limitToOptions>
+				<default>auto</default>
+				<options>
+					<option value="auto">Auto</option>
+					<option value="ccu">CCU</option>
+				</options>
+			</parameter>
 			<parameter name="callbackHost" type="text">
 				<context>network_address</context>
 				<label>Callback Network Address</label>
@@ -38,12 +37,12 @@
 				<label>Alive Interval</label>
 				<description>The interval in seconds to check if the communication with the Homematic gateway is still alive. 
 				If no message receives from the Homematic gateway, the RPC server restarts (default = 300)</description>
-                <advanced>true</advanced>
+				<advanced>true</advanced>
 			</parameter>
 			<parameter name="reconnectInterval" type="integer">
 				<label>Reconnect Interval</label>
 				<description>The interval in seconds to force a reconnect to the Homematic gateway, disables Alive Interval! (0 = disabled, default = disabled)</description>
-                <advanced>true</advanced>
+				<advanced>true</advanced>
 			</parameter>
 			<parameter name="timeout" type="integer">
 				<label>Timeout</label>
@@ -55,22 +54,22 @@
 				<description>The maximum lifetime of a pooled socket connection to the Homematic gateway in seconds (default = 900)</description>
 				<advanced>true</advanced>
 			</parameter>
-            <parameter name="rfPort" type="integer">
-                <label>RF port</label>
-                <description>The port number of the RF daemon (default = 2001)</description>
-                <advanced>true</advanced>
-            </parameter>
-            <parameter name="wiredPort" type="integer">
-                <label>Wired port</label>
-                <description>The port number of the HS485 daemon (default = 2000)</description>
-                <advanced>true</advanced>
-            </parameter>
-            <parameter name="cuxdPort" type="integer">
-                <label>CUxD port</label>
-                <description>The port number of the CUxD daemon (default = 8701)</description>
-                <advanced>true</advanced>
-            </parameter>
-			
+			<parameter name="rfPort" type="integer">
+				<label>RF port</label>
+				<description>The port number of the RF daemon (default = 2001)</description>
+				<advanced>true</advanced>
+			</parameter>
+			<parameter name="wiredPort" type="integer">
+				<label>Wired port</label>
+				<description>The port number of the HS485 daemon (default = 2000)</description>
+				<advanced>true</advanced>
+			</parameter>
+			<parameter name="cuxdPort" type="integer">
+				<label>CUxD port</label>
+				<description>The port number of the CUxD daemon (default = 8701)</description>
+				<advanced>true</advanced>
+			</parameter>
+
 		</config-description>
 	</bridge-type>
 </thing:thing-descriptions>
