@@ -57,31 +57,27 @@ public class HomematicThingHandler extends BaseThingHandler {
      */
     @Override
     public void initialize() {
-        if (getThing().getChannels().size() == 0) {
-            updateStatus(ThingStatus.INITIALIZING);
-        } else {
-            try {
-                HomematicGateway gateway = getHomematicGateway();
-                HmDevice device = gateway.getDevice(UidUtils.getHomematicAddress(getThing()));
-                updateStatus(device);
-                if (!device.isOffline()) {
-                    logger.debug("Initializing {} channels of thing '{}' from gateway '{}'",
-                            getThing().getChannels().size(), getThing().getUID(), gateway.getId());
+        try {
+            HomematicGateway gateway = getHomematicGateway();
+            HmDevice device = gateway.getDevice(UidUtils.getHomematicAddress(getThing()));
+            updateStatus(device);
+            if (!device.isOffline()) {
+                logger.debug("Initializing {} channels of thing '{}' from gateway '{}'",
+                        getThing().getChannels().size(), getThing().getUID(), gateway.getId());
 
-                    for (Channel channel : getThing().getChannels()) {
-                        updateChannelState(channel.getUID());
-                    }
+                for (Channel channel : getThing().getChannels()) {
+                    updateChannelState(channel.getUID());
                 }
-            } catch (HomematicClientException ex) {
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, ex.getMessage());
-            } catch (IOException ex) {
-                logger.error(ex.getMessage(), ex);
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ex.getMessage());
-            } catch (BridgeHandlerNotAvailableException ex) {
-                // ignore
-            } catch (Exception ex) {
-                logger.error(ex.getMessage(), ex);
             }
+        } catch (HomematicClientException ex) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, ex.getMessage());
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ex.getMessage());
+        } catch (BridgeHandlerNotAvailableException ex) {
+            // ignore
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -270,7 +266,9 @@ public class HomematicThingHandler extends BaseThingHandler {
      */
     private HomematicGateway getHomematicGateway() throws BridgeHandlerNotAvailableException {
         if (getBridge() == null || getBridge().getHandler() == null) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_MISSING_ERROR);
+            if (thing.getStatus() != ThingStatus.INITIALIZING) {
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_MISSING_ERROR);
+            }
             throw new BridgeHandlerNotAvailableException("BridgeHandler not yet available!");
         }
 
