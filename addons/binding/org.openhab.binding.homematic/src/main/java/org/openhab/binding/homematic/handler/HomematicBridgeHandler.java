@@ -171,6 +171,8 @@ public class HomematicBridgeHandler extends BaseBridgeHandler implements Homemat
         }
         if (homematicConfig.getCallbackPort() == 0) {
             homematicConfig.setCallbackPort(portPool.getNextPort());
+        } else {
+            portPool.setInUse(homematicConfig.getCallbackPort());
         }
         logger.debug(homematicConfig.toString());
         return homematicConfig;

@@ -23,6 +23,16 @@ public class SimplePortPool {
     private List<PortInfo> availablePorts = new ArrayList<PortInfo>();
 
     /**
+     * Adds the specified port to the pool an mark it as in use.
+     */
+    public void setInUse(int port) {
+        PortInfo portInfo = new PortInfo();
+        portInfo.port = port;
+        portInfo.free = false;
+        availablePorts.add(portInfo);
+    }
+
+    /**
      * Returns the next free port number.
      */
     public synchronized int getNextPort() {
@@ -34,11 +44,25 @@ public class SimplePortPool {
         }
 
         PortInfo portInfo = new PortInfo();
-        portInfo.port = START_PORT++;
+        while (isPortInUse(START_PORT++)) {
+        }
+        portInfo.port = START_PORT - 1;
         portInfo.free = false;
         availablePorts.add(portInfo);
 
         return portInfo.port;
+    }
+
+    /**
+     * Returns true, if the specified port is not in use.
+     */
+    private boolean isPortInUse(int port) {
+        for (PortInfo portInfo : availablePorts) {
+            if (portInfo.port == port) {
+                return !portInfo.free;
+            }
+        }
+        return false;
     }
 
     /**
