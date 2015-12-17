@@ -72,7 +72,6 @@ public class HomematicThingHandler extends BaseThingHandler {
         } catch (HomematicClientException ex) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, ex.getMessage());
         } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, ex.getMessage());
         } catch (BridgeHandlerNotAvailableException ex) {
             // ignore
