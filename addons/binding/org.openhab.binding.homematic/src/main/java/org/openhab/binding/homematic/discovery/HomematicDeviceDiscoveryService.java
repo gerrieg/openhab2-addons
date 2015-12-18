@@ -39,7 +39,7 @@ public class HomematicDeviceDiscoveryService extends AbstractDiscoveryService {
     private Future<?> scanFuture;
 
     public HomematicDeviceDiscoveryService(HomematicBridgeHandler bridgeHandler) {
-        super(ImmutableSet.of(new ThingTypeUID(BINDING_ID, "-")), DISCOVER_TIMEOUT_SECONDS, true);
+        super(ImmutableSet.of(new ThingTypeUID(BINDING_ID, "-")), DISCOVER_TIMEOUT_SECONDS, false);
         this.bridgeHandler = bridgeHandler;
     }
 
@@ -65,45 +65,17 @@ public class HomematicDeviceDiscoveryService extends AbstractDiscoveryService {
     protected void startScan() {
         logger.debug("Starting Homematic discovery scan");
         loadDevices();
-        waitForScanFinishing();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected synchronized void stopScan() {
+    public synchronized void stopScan() {
         logger.debug("Stopping Homematic discovery scan");
-        stopLoadDevices();
+        bridgeHandler.getGateway().cancelLoadAllDeviceMetadata();
+        waitForScanFinishing();
         super.stopScan();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void startBackgroundDiscovery() {
-        logger.debug("Starting Homematic discovery background scan");
-        loadDevices();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void stopBackgroundDiscovery() {
-        logger.debug("Stopping Homematic discovery background scan");
-        stopLoadDevices();
-    }
-
-    /**
-     * Stops the device scanning thread.
-     */
-    public void stopLoadDevices() {
-        if (scanFuture != null) {
-            scanFuture.cancel(true);
-            scanFuture = null;
-        }
     }
 
     /**

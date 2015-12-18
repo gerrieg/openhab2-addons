@@ -45,6 +45,11 @@ public interface HomematicGateway {
     public HmDevice getDevice(String address) throws HomematicClientException;
 
     /**
+     * Cancel loading all device metadata.
+     */
+    public void cancelLoadAllDeviceMetadata();
+
+    /**
      * Loads all device, channel and datapoint metadata from the gateway.
      */
     public void loadAllDeviceMetadata() throws IOException;

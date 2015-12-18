@@ -75,6 +75,7 @@ public class HomematicBridgeHandler extends BaseBridgeHandler implements Homemat
 
                 @Override
                 public void run() {
+                    discoveryService.startScan(null);
                     discoveryService.waitForScanFinishing();
                     updateStatus(ThingStatus.ONLINE);
                     for (Thing hmThing : getThing().getThings()) {
@@ -111,7 +112,7 @@ public class HomematicBridgeHandler extends BaseBridgeHandler implements Homemat
         logger.debug("Disposing bridge '{}'", getThing().getUID().getId());
         super.dispose();
         if (discoveryService != null) {
-            discoveryService.stopLoadDevices();
+            discoveryService.stopScan();
             unregisterDeviceDiscoveryService();
         }
         if (gateway != null) {

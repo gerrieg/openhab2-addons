@@ -86,6 +86,7 @@ public abstract class AbstractHomematicGateway implements RpcEventListener, Home
     private Map<String, HmDevice> devices = Collections.synchronizedMap(new HashMap<String, HmDevice>());
     private List<HmInterface> availableInterfaces = new ArrayList<HmInterface>(3);
     private static List<VirtualDatapointHandler> virtualDatapointHandlers = new ArrayList<VirtualDatapointHandler>();
+    private boolean cancelLoadAllMetadata;
 
     static {
         // loads all virtual datapoints
@@ -308,7 +309,16 @@ public abstract class AbstractHomematicGateway implements RpcEventListener, Home
      * {@inheritDoc}
      */
     @Override
+    public void cancelLoadAllDeviceMetadata() {
+        cancelLoadAllMetadata = true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void loadAllDeviceMetadata() throws IOException {
+        cancelLoadAllMetadata = false;
         // load all device descriptions
         List<HmDevice> deviceDescriptions = getDeviceDescriptions();
 
@@ -316,45 +326,50 @@ public abstract class AbstractHomematicGateway implements RpcEventListener, Home
         Set<String> loadedDevices = new HashSet<String>();
         Map<String, Collection<HmDatapoint>> datapointsByChannelIdCache = new HashMap<String, Collection<HmDatapoint>>();
         for (HmDevice device : deviceDescriptions) {
-            try {
-                logger.trace("Loading metadata for device '{}' of type '{}'", device.getAddress(), device.getType());
-                if (device.isGatewayExtras()) {
-                    loadChannelValues(device.getChannel(HmChannel.CHANNEL_NUMBER_VARIABLE));
-                    loadChannelValues(device.getChannel(HmChannel.CHANNEL_NUMBER_SCRIPT));
-                } else {
-                    for (HmChannel channel : device.getChannels()) {
-                        logger.trace("  Loading channel {}", channel);
-                        // speed up metadata generation a little bit for equal channels in the gateway devices
-                        if ((DEVICE_TYPE_VIRTUAL.equals(device.getType())
-                                || DEVICE_TYPE_VIRTUAL_WIRED.equals(device.getType())) && channel.getNumber() > 1) {
-                            HmChannel previousChannel = device.getChannel(channel.getNumber() - 1);
-                            cloneAllDatapointsIntoChannel(channel, previousChannel.getDatapoints().values());
-                        } else {
-                            String channelId = UidUtils.generateChannelId(channel);
-                            Collection<HmDatapoint> cachedDatapoints = datapointsByChannelIdCache.get(channelId);
-                            if (cachedDatapoints != null) {
-                                // clone all datapoints
-                                cloneAllDatapointsIntoChannel(channel, cachedDatapoints);
+            if (!cancelLoadAllMetadata) {
+                try {
+                    logger.trace("Loading metadata for device '{}' of type '{}'", device.getAddress(),
+                            device.getType());
+                    if (device.isGatewayExtras()) {
+                        loadChannelValues(device.getChannel(HmChannel.CHANNEL_NUMBER_VARIABLE));
+                        loadChannelValues(device.getChannel(HmChannel.CHANNEL_NUMBER_SCRIPT));
+                    } else {
+                        for (HmChannel channel : device.getChannels()) {
+                            logger.trace("  Loading channel {}", channel);
+                            // speed up metadata generation a little bit for equal channels in the gateway devices
+                            if ((DEVICE_TYPE_VIRTUAL.equals(device.getType())
+                                    || DEVICE_TYPE_VIRTUAL_WIRED.equals(device.getType())) && channel.getNumber() > 1) {
+                                HmChannel previousChannel = device.getChannel(channel.getNumber() - 1);
+                                cloneAllDatapointsIntoChannel(channel, previousChannel.getDatapoints().values());
                             } else {
-                                logger.trace("    Loading datapoints into channel {}", channel);
-                                // load all datapoints from the gateway
-                                rpcClient.addChannelDatapoints(channel, HmParamsetType.MASTER);
-                                rpcClient.addChannelDatapoints(channel, HmParamsetType.VALUES);
+                                String channelId = UidUtils.generateChannelId(channel);
+                                Collection<HmDatapoint> cachedDatapoints = datapointsByChannelIdCache.get(channelId);
+                                if (cachedDatapoints != null) {
+                                    // clone all datapoints
+                                    cloneAllDatapointsIntoChannel(channel, cachedDatapoints);
+                                } else {
+                                    logger.trace("    Loading datapoints into channel {}", channel);
+                                    // load all datapoints from the gateway
+                                    rpcClient.addChannelDatapoints(channel, HmParamsetType.MASTER);
+                                    rpcClient.addChannelDatapoints(channel, HmParamsetType.VALUES);
 
-                                datapointsByChannelIdCache.put(channelId, channel.getDatapoints().values());
+                                    datapointsByChannelIdCache.put(channelId, channel.getDatapoints().values());
+                                }
                             }
                         }
                     }
+                    prepareDevice(device);
+                    loadedDevices.add(device.getAddress());
+                    eventListener.onDeviceLoaded(device);
+                } catch (IOException ex) {
+                    logger.warn("Can't load device with address '{}' from gateway '{}':{}", device.getAddress(), id,
+                            ex.getMessage());
                 }
-                prepareDevice(device);
-                loadedDevices.add(device.getAddress());
-                eventListener.onDeviceLoaded(device);
-            } catch (IOException ex) {
-                logger.warn("Can't load device with address '{}' from gateway '{}':{}", device.getAddress(), id,
-                        ex.getMessage());
             }
         }
-        devices.keySet().retainAll(loadedDevices);
+        if (!cancelLoadAllMetadata) {
+            devices.keySet().retainAll(loadedDevices);
+        }
     }
 
     /**
