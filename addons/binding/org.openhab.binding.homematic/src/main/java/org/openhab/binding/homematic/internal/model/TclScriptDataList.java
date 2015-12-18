@@ -11,21 +11,18 @@ package org.openhab.binding.homematic.internal.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * Simple class with the JAXB mapping for a list of entries returned from a TclRega script.
+ * Simple class with the XStream mapping for a list of entries returned from a TclRega script.
  *
  * @author Gerhard Riegler - Initial contribution
  */
-@XmlRootElement(name = "list")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XStreamAlias("list")
 public class TclScriptDataList {
 
-    @XmlElement(name = "entry")
+    @XStreamImplicit(itemFieldName = "entry")
     private List<TclScriptDataEntry> entries = new ArrayList<TclScriptDataEntry>();
 
     /**

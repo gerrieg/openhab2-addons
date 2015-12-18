@@ -37,18 +37,19 @@ public class CcuValueParser extends CommonRpcParser<TclScriptDataList, Void> {
      */
     @Override
     public Void parse(TclScriptDataList resultList) throws IOException {
-        for (TclScriptDataEntry entry : resultList.getEntries()) {
-            HmDatapointInfo dpInfo = HmDatapointInfo.createValuesInfo(channel, entry.name);
-            HmDatapoint dp = channel.getDatapoint(dpInfo);
-            if (dp != null) {
-                setDatapointValue(dp, entry.value);
-                adjustRssiValue(dp);
-            } else {
-                // should never happen, but in case ...
-                logger.warn("Can't set value for datapoint '{}'", dpInfo);
+        if (resultList.getEntries() != null) {
+            for (TclScriptDataEntry entry : resultList.getEntries()) {
+                HmDatapointInfo dpInfo = HmDatapointInfo.createValuesInfo(channel, entry.name);
+                HmDatapoint dp = channel.getDatapoint(dpInfo);
+                if (dp != null) {
+                    setDatapointValue(dp, entry.value);
+                    adjustRssiValue(dp);
+                } else {
+                    // should never happen, but in case ...
+                    logger.warn("Can't set value for datapoint '{}'", dpInfo);
+                }
             }
         }
-
         return null;
     }
 }

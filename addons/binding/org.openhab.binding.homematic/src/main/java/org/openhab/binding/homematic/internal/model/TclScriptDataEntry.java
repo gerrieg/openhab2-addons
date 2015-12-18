@@ -8,45 +8,44 @@
  */
 package org.openhab.binding.homematic.internal.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * Simple class with the JAXB mapping for a data entry returned from a TclRega script.
+ * Simple class with the XStream mapping for a data entry returned from a TclRega script.
  *
  * @author Gerhard Riegler - Initial contribution
  */
-@XmlRootElement(name = "entry")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XStreamAlias("entry")
 public class TclScriptDataEntry {
 
-    @XmlAttribute(name = "name", required = true)
+    @XStreamAsAttribute
     public String name;
 
-    @XmlAttribute(name = "description")
+    @XStreamAsAttribute
     public String description;
 
-    @XmlAttribute(name = "value")
+    @XStreamAsAttribute
     public String value;
 
-    @XmlAttribute(name = "valueType", required = true)
+    @XStreamAsAttribute
     public String valueType;
 
-    @XmlAttribute(name = "readOnly")
+    @XStreamAsAttribute
     public boolean readOnly;
 
-    @XmlAttribute(name = "options")
+    @XStreamAsAttribute
     public String options;
 
-    @XmlAttribute(name = "min")
+    @XStreamAsAttribute
+    @XStreamAlias("min")
     public String minValue;
 
-    @XmlAttribute(name = "max")
+    @XStreamAsAttribute
+    @XStreamAlias("max")
     public String maxValue;
 
-    @XmlAttribute(name = "unit")
+    @XStreamAsAttribute
     public String unit;
 
 }

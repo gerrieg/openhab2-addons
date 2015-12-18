@@ -35,30 +35,31 @@ public class CcuVariablesAndScriptsParser extends CommonRpcParser<TclScriptDataL
      */
     @Override
     public Void parse(TclScriptDataList resultList) throws IOException {
-        for (TclScriptDataEntry entry : resultList.getEntries()) {
-            HmDatapoint dp = new HmDatapoint();
-            dp.setName(entry.name);
-            dp.setInfo(entry.name);
-            dp.setDescription(entry.description);
-            dp.setValue(guessVariableValueType(entry.value));
-            dp.setMinValue((Number) guessVariableValueType(entry.minValue));
-            dp.setMaxValue((Number) guessVariableValueType(entry.maxValue));
-            dp.setReadOnly(entry.readOnly);
-            dp.setUnit(entry.unit);
+        if (resultList.getEntries() != null) {
+            for (TclScriptDataEntry entry : resultList.getEntries()) {
+                HmDatapoint dp = new HmDatapoint();
+                dp.setName(entry.name);
+                dp.setInfo(entry.name);
+                dp.setDescription(entry.description);
+                dp.setValue(guessVariableValueType(entry.value));
+                dp.setMinValue((Number) guessVariableValueType(entry.minValue));
+                dp.setMaxValue((Number) guessVariableValueType(entry.maxValue));
+                dp.setReadOnly(entry.readOnly);
+                dp.setUnit(entry.unit);
 
-            String[] result = StringUtils.splitByWholeSeparatorPreserveAllTokens(entry.options, ";");
-            dp.setOptions(result == null || result.length == 0 ? null : result);
+                String[] result = StringUtils.splitByWholeSeparatorPreserveAllTokens(entry.options, ";");
+                dp.setOptions(result == null || result.length == 0 ? null : result);
 
-            if (dp.getOptions() != null) {
-                dp.setMinValue(0);
-                dp.setMaxValue(dp.getOptions().length - 1);
+                if (dp.getOptions() != null) {
+                    dp.setMinValue(0);
+                    dp.setMaxValue(dp.getOptions().length - 1);
+                }
+
+                dp.setType(HmValueType.parse(entry.valueType));
+                dp.setParamsetType(HmParamsetType.VALUES);
+                channel.addDatapoint(dp);
             }
-
-            dp.setType(HmValueType.parse(entry.valueType));
-            dp.setParamsetType(HmParamsetType.VALUES);
-            channel.addDatapoint(dp);
         }
-
         return null;
     }
 

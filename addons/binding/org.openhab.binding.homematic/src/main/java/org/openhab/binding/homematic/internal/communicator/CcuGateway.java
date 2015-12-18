@@ -10,16 +10,11 @@ package org.openhab.binding.homematic.internal.communicator;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +38,9 @@ import org.openhab.binding.homematic.internal.model.TclScriptList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+
 /**
  * HomematicGateway implementation for a CCU.
  *
@@ -54,9 +52,16 @@ public class CcuGateway extends AbstractHomematicGateway {
 
     private Map<String, String> tclregaScripts;
     private HttpClient httpClient;
+    private XStream xStream = new XStream(new StaxDriver());
 
     protected CcuGateway(String id, HomematicConfig config, HomematicGatewayListener eventListener) {
         super(id, config, eventListener);
+
+        xStream.setClassLoader(CcuGateway.class.getClassLoader());
+        xStream.autodetectAnnotations(true);
+        xStream.alias("scripts", TclScriptList.class);
+        xStream.alias("list", TclScriptDataList.class);
+        xStream.alias("result", HmResult.class);
     }
 
     /**
@@ -225,8 +230,7 @@ public class CcuGateway extends AbstractHomematicGateway {
                 logger.trace("Result TclRegaScript: {}", result);
             }
 
-            Unmarshaller um = JAXBContext.newInstance(clazz).createUnmarshaller();
-            return (T) um.unmarshal(new StringReader(result));
+            return (T) xStream.fromXML(result);
         } catch (Exception ex) {
             throw new IOException(ex.getMessage(), ex);
         }
@@ -236,20 +240,17 @@ public class CcuGateway extends AbstractHomematicGateway {
      * Load predefined scripts from an XML file.
      */
     private Map<String, String> loadTclRegaScripts() throws IOException {
-        try {
-            Unmarshaller um = JAXBContext.newInstance(TclScriptList.class).createUnmarshaller();
-            InputStream stream = Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream("homematic/tclrega-scripts.xml");
-            TclScriptList scriptList = (TclScriptList) um.unmarshal(stream);
+        InputStream stream = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream("homematic/tclrega-scripts.xml");
+        TclScriptList scriptList = (TclScriptList) xStream.fromXML(stream);
 
-            Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<String, String>();
+        if (scriptList.getScripts() != null) {
             for (TclScript script : scriptList.getScripts()) {
                 result.put(script.name, StringUtils.trimToNull(script.data));
             }
-            return result;
-        } catch (JAXBException ex) {
-            throw new IOException(ex.getMessage(), ex);
         }
+        return result;
     }
 
 }

@@ -8,21 +8,16 @@
  */
 package org.openhab.binding.homematic.internal.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * Result object from a TclRega Script call.
- * 
+ *
  * @author Gerhard Riegler - Initial contribution
  */
-@XmlRootElement(name = "result")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XStreamAlias("result")
 public class HmResult {
 
-    @XmlElement(name = "valid")
     private boolean valid;
 
     public HmResult() {

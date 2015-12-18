@@ -11,22 +11,19 @@ package org.openhab.binding.homematic.internal.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * Simple class with the JAXB mapping for a list of TclRega scripts. Used to load the resource
+ * Simple class with the XStream mapping for a list of TclRega scripts. Used to load the resource
  * homematic/tclrega-scripts.xml.
- * 
+ *
  * @author Gerhard Riegler - Initial contribution
  */
-@XmlRootElement(name = "scripts")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XStreamAlias("scripts")
 public class TclScriptList {
 
-    @XmlElement(name = "script")
+    @XStreamImplicit
     private List<TclScript> scripts = new ArrayList<TclScript>();
 
     /**
