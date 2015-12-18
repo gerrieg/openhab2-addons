@@ -12,16 +12,18 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import org.eclipse.smarthome.core.common.ThreadPoolManager;
 
 /**
  * Waits for a message from the Homematic gateway and starts the RpcCallbackHandler to handle the message.
- * 
+ *
  * @author Gerhard Riegler - Initial contribution
  */
 public class RpcNetworkService implements Runnable {
+    // FIXME: dependency to openHab
+    private final ExecutorService pool = ThreadPoolManager.getPool("homematicRpc");
     private ServerSocket serverSocket;
-    private final ExecutorService pool = Executors.newCachedThreadPool();
     private boolean accept = true;
     private RpcEventListener listener;
     private String encoding;

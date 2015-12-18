@@ -20,13 +20,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.smarthome.core.common.ThreadPoolManager;
 import org.openhab.binding.homematic.internal.common.HomematicConfig;
 import org.openhab.binding.homematic.internal.communicator.client.RpcClient;
 import org.openhab.binding.homematic.internal.communicator.server.RpcEventListener;
@@ -78,7 +78,8 @@ public abstract class AbstractHomematicGateway implements RpcEventListener, Home
     private long lastEventTime = System.currentTimeMillis();
     private DelayedExecuter delayedExecutor = new DelayedExecuter();
     private Set<HmDatapointInfo> echoEvents = Collections.synchronizedSet(new HashSet<HmDatapointInfo>());
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+    // FIXME: dependency to openHab
+    private final ScheduledExecutorService scheduler = ThreadPoolManager.getScheduledPool("homematicGateway");
     private ScheduledFuture<?> eventTrackerThread;
     private ScheduledFuture<?> connectionTrackerThread;
     private ScheduledFuture<?> reconnectThread;
