@@ -33,6 +33,7 @@ public class RpcServer {
 
         networkService = new RpcNetworkService(listener, config.getCallbackPort(), config.getEncoding());
         networkServiceThread = new Thread(networkService);
+        networkServiceThread.setName("HomematicRpcServer");
         networkServiceThread.start();
     }
 
