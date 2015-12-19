@@ -82,10 +82,11 @@ public class HomematicDeviceDiscoveryService extends AbstractDiscoveryService {
      * Waits for the discovery scan to finish and then returns.
      */
     public void waitForScanFinishing() {
-        logger.debug("Waiting for finishing Homematic device discovery scan");
         if (scanFuture != null) {
+            logger.debug("Waiting for finishing Homematic device discovery scan");
             try {
                 scanFuture.get();
+                logger.debug("Homematic device discovery scan finished");
             } catch (CancellationException ex) {
                 // ignore
             } catch (Exception ex) {
