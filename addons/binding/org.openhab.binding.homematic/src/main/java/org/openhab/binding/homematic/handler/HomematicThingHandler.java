@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +25,7 @@ import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.config.core.validation.ConfigValidationException;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.StopMoveType;
+import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -58,6 +61,9 @@ import org.slf4j.LoggerFactory;
 public class HomematicThingHandler extends BaseThingHandler {
     private Logger logger = LoggerFactory.getLogger(HomematicThingHandler.class);
 
+    private boolean isInitialized = false;
+    private final Lock isInitializedLock = new ReentrantLock();
+
     public HomematicThingHandler(Thing thing) {
         super(thing);
     }
@@ -74,12 +80,11 @@ public class HomematicThingHandler extends BaseThingHandler {
                 try {
                     HomematicGateway gateway = getHomematicGateway();
                     HmDevice device = gateway.getDevice(UidUtils.getHomematicAddress(getThing()));
-                    HmChannel channelZero = device.getChannel(0);
-                    loadHomematicChannelValues(channelZero);
                     updateStatus(device);
                     logger.debug("Initializing thing '{}' from gateway '{}'", getThing().getUID(), gateway.getId());
 
                     // update properties
+                    final HmChannel channelZero = device.getChannel(0);
                     Map<String, String> properties = editProperties();
                     setProperty(properties, channelZero, PROPERTY_BATTERY_TYPE, VIRTUAL_DATAPOINT_NAME_BATTERY_TYPE);
                     setProperty(properties, channelZero, Thing.PROPERTY_FIRMWARE_VERSION,
@@ -100,6 +105,13 @@ public class HomematicThingHandler extends BaseThingHandler {
                         }
                     }
                     updateConfiguration(config);
+
+                    try {
+                        isInitializedLock.lock();
+                        isInitialized = true;
+                    } finally {
+                        isInitializedLock.unlock();
+                    }
                 } catch (HomematicClientException ex) {
                     updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, ex.getMessage());
                 } catch (IOException ex) {
@@ -111,6 +123,22 @@ public class HomematicThingHandler extends BaseThingHandler {
                 }
             }
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+        updateStatus(ThingStatus.OFFLINE);
+
+        try {
+            isInitializedLock.lock();
+            isInitialized = false;
+        } finally {
+            isInitializedLock.unlock();
+        }
     }
 
     /**
@@ -211,7 +239,7 @@ public class HomematicThingHandler extends BaseThingHandler {
      */
     protected void updateDatapointState(HmDatapoint dp) {
         try {
-            if (HomematicTypeGeneratorImpl.isStatusDatapoint(dp)) {
+            if (HomematicTypeGeneratorImpl.isStatusDatapoint(dp) && isInitialized) {
                 updateStatus(dp.getChannel().getDevice());
             }
             if (dp.getParamsetType() == HmParamsetType.MASTER) {
@@ -219,7 +247,7 @@ public class HomematicThingHandler extends BaseThingHandler {
                 Configuration config = editConfiguration();
                 config.put(MetadataUtils.getParameterName(dp), dp.isEnumType() ? dp.getOptionValue() : dp.getValue());
                 updateConfiguration(config);
-            } else if (!HomematicTypeGeneratorImpl.isIgnoredDatapoint(dp)) {
+            } else if (!HomematicTypeGeneratorImpl.isIgnoredDatapoint(dp) && isInitialized) {
                 // update channel
                 ChannelUID channelUID = UidUtils.generateChannelUID(dp, thing.getUID());
                 Channel channel = thing.getChannel(channelUID.getId());
@@ -229,10 +257,10 @@ public class HomematicThingHandler extends BaseThingHandler {
                     logger.warn("Channel not found for datapoint '{}'", new HmDatapointInfo(dp));
                 }
             }
-        } catch (BridgeHandlerNotAvailableException ex) {
-            // ignore
-        } catch (Exception ex) {
-            logger.error("{}", ex.getMessage(), ex);
+        } catch (BridgeHandlerNotAvailableException exception) {
+            logger.warn("{}", exception.getMessage(), exception);
+        } catch (Exception exception) {
+            logger.error("{}", exception.getMessage(), exception);
         }
     }
 
@@ -254,21 +282,18 @@ public class HomematicThingHandler extends BaseThingHandler {
     /**
      * Loads all values for the given Homematic channel if it is not initialized.
      */
-    private void loadHomematicChannelValues(HmChannel hmChannel)
+    private synchronized void loadHomematicChannelValues(HmChannel hmChannel)
             throws BridgeHandlerNotAvailableException, IOException {
         if (!hmChannel.isInitialized()) {
-            synchronized (this) {
-                if (!hmChannel.isInitialized()) {
-                    try {
-                        getHomematicGateway().loadChannelValues(hmChannel);
-                    } catch (IOException ex) {
-                        if (hmChannel.getDevice().isOffline()) {
-                            logger.warn("Device '{}' is OFFLINE, can't update channel '{}'",
-                                    hmChannel.getDevice().getAddress(), hmChannel.getNumber());
-                        } else {
-                            throw ex;
-                        }
-                    }
+            try {
+                getHomematicGateway().loadChannelValues(hmChannel);
+            } catch (IOException ex) {
+                final HmDevice device = hmChannel.getDevice();
+                if (device.isOffline()) {
+                    logger.warn("Device '{}' is OFFLINE, can't update channel '{}'", device.getAddress(),
+                            hmChannel.getNumber());
+                } else {
+                    throw ex;
                 }
             }
         }
@@ -303,14 +328,6 @@ public class HomematicThingHandler extends BaseThingHandler {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void updateStatus(ThingStatus status) {
-        super.updateStatus(status);
-    }
-
-    /**
      * Returns true, if the channel is linked at least to one item.
      */
     private boolean isLinked(Channel channel) {
@@ -328,15 +345,16 @@ public class HomematicThingHandler extends BaseThingHandler {
      * Returns the Homematic gateway if the bridge is available.
      */
     private HomematicGateway getHomematicGateway() throws BridgeHandlerNotAvailableException {
-        if (getBridge() == null || getBridge().getHandler() == null
-                || ((HomematicBridgeHandler) getBridge().getHandler()).getGateway() == null) {
+        final Bridge bridge = getBridge();
+        if (bridge == null || bridge.getHandler() == null
+                || ((HomematicBridgeHandler) bridge.getHandler()).getGateway() == null) {
             if (thing.getStatus() != ThingStatus.INITIALIZING) {
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.HANDLER_MISSING_ERROR);
             }
             throw new BridgeHandlerNotAvailableException("BridgeHandler not yet available!");
         }
 
-        return ((HomematicBridgeHandler) getBridge().getHandler()).getGateway();
+        return ((HomematicBridgeHandler) bridge.getHandler()).getGateway();
     }
 
     /**
@@ -368,10 +386,11 @@ public class HomematicThingHandler extends BaseThingHandler {
                         try {
                             if (newValue != null) {
                                 if (newValue instanceof BigDecimal) {
+                                    final BigDecimal decimal = (BigDecimal) newValue;
                                     if (dp.isIntegerType()) {
-                                        newValue = ((BigDecimal) newValue).intValue();
+                                        newValue = decimal.intValue();
                                     } else if (dp.isFloatType()) {
-                                        newValue = ((BigDecimal) newValue).doubleValue();
+                                        newValue = decimal.doubleValue();
                                     }
                                 }
                                 if (ObjectUtils.notEqual(dp.isEnumType() ? dp.getOptionValue() : dp.getValue(),

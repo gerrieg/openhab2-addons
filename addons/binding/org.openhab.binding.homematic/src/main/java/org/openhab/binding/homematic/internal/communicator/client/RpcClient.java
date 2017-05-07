@@ -147,7 +147,8 @@ public abstract class RpcClient<T> {
         RpcRequest<T> request = createRpcRequest("getParamsetDescription");
         request.addArg(getRpcAddress(channel.getDevice().getAddress()) + ":" + channel.getNumber());
         request.addArg(paramsetType.toString());
-        new GetParamsetDescriptionParser(channel, paramsetType).parse(sendMessage(config.getRpcPort(channel), request));
+        final GetParamsetDescriptionParser parser = new GetParamsetDescriptionParser(channel, paramsetType);
+        parser.parse(sendMessage(config.getRpcPort(channel), request));
     }
 
     /**
