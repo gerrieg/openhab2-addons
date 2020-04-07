@@ -18,6 +18,10 @@
 				<context>password</context>
 				<description>Password for logging in to Gardena Smart Home</description>
 			</parameter>
+			<parameter name="apiKey" type="text" required="true">
+				<label>API Key</label>
+				<description>The Gardena Smart Home API key</description>
+			</parameter>
 			<parameter name="sessionTimeout" type="integer">
 				<label>Session Timeout</label>
 				<description>The timeout in minutes for a session to Gardena Smart Home</description>
@@ -36,6 +40,16 @@
 				<advanced>true</advanced>
 				<default>60</default>
 			</parameter>
+			<parameter name="websocketIdleTimeout" type="integer" min="0" max="3600" unit="s">
+				<required>false</required>
+				<unitLabel>seconds</unitLabel>
+				<label>WebSocket Idle Timeout in Seconds</label>
+				<description>The WebSocket is the connection to the Gardena service that listens to status updates.
+					If no data is received over the websocket connection for the given time,
+					the websocket will reconnect. 0 will disable the idle timeout. Default is 900 seconds (15 minutes).</description>
+				<default>900</default>
+			</parameter>
+
 		</config-description>
 	</bridge-type>
 </thing:thing-descriptions>

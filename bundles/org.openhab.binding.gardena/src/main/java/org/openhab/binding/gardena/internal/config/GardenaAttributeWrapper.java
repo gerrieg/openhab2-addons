@@ -15,23 +15,34 @@ package org.openhab.binding.gardena.internal.config;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * GardenaConfgData wrapper for valid Gardena JSON serialization.
+ * Gardena attribute wrapper for valid Gardena JSON serialization.
  *
  * @author Gerhard Riegler - Initial contribution
  */
 
-public class GardenaConfigDataWrapper {
+public class GardenaAttributeWrapper {
     @SerializedName("attributes")
-    private GardenaConfig config;
+    private Object attributes;
 
     @SerializedName("type")
-    private String typeToken = "token";
+    private String type = "token";
 
-    public GardenaConfigDataWrapper() {
+    @SerializedName("id")
+    private String id;
+
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public GardenaConfigDataWrapper(GardenaConfig config) {
-        this.config = config;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public GardenaAttributeWrapper() {
+    }
+
+    public GardenaAttributeWrapper(Object attributes) {
+        this.attributes = attributes;
     }
 
 }

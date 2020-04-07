@@ -27,15 +27,18 @@ public class GardenaConfig {
 
     private static final Integer DEFAULT_SESSION_TIMEOUT = 30;
     private static final Integer DEFAULT_CONNECTION_TIMEOUT = 10;
-    private static final Integer DEFAULT_REFRESH = 60;
+    private static final Integer DEFAULT_REFRESH = 600;
+    private static final Integer DEFAULT_WEBSOCKET_IDLE_TIMEOUT = 900;
 
     @SerializedName("username")
     private String email;
     private String password;
+    private String apiKey;
 
     private transient Integer sessionTimeout = DEFAULT_SESSION_TIMEOUT;
     private transient Integer connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private transient Integer refresh = DEFAULT_REFRESH;
+    private transient Integer websocketIdleTimeout = DEFAULT_WEBSOCKET_IDLE_TIMEOUT;
 
     public GardenaConfig() {
     }
@@ -116,10 +119,32 @@ public class GardenaConfig {
     }
 
     /**
+     * Return the websocket idle timeout.
+     */
+    public Integer getWebsocketIdleTimeout() {
+        return websocketIdleTimeout;
+    }
+
+    /**
+     * Sets the websocket idle timeout.
+     */
+    public void setWebsocketIdleTimeout(Integer websocketIdleTimeout) {
+        this.websocketIdleTimeout = websocketIdleTimeout;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    /**
      * Validate the config, if at least email and password is specified.
      */
     public boolean isValid() {
-        return StringUtils.isNotBlank(email) && StringUtils.isNotBlank(password);
+        return StringUtils.isNotBlank(email) && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(apiKey);
     }
 
     @Override
@@ -127,7 +152,8 @@ public class GardenaConfig {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("email", email)
                 .append("password", StringUtils.isBlank(password) ? "" : StringUtils.repeat("*", password.length()))
                 .append("sessionTimeout", sessionTimeout).append("connectionTimeout", connectionTimeout)
-                .append("refresh", refresh).toString();
+                .append("refresh", refresh).append("websocketIdleTimeout", websocketIdleTimeout)
+                .append("apiKey", apiKey).toString();
     }
 
 }

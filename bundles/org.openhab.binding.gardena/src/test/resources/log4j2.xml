@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="10">
+    <Properties>
+        <Property name="log_pattern">%date{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %-30.30logger{36} - %msg %n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${log_pattern}" />
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.openhab.binding.gardena" level="TRACE" />
+
+        <Root level="INFO">
+            <AppenderRef ref="Console" />
+        </Root>
+
+    </Loggers>
+
+</Configuration>

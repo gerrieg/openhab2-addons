@@ -93,9 +93,10 @@ public class GardenaAccountHandler extends BaseBridgeHandler implements GardenaS
     }
 
     /**
-     * Schedules a reinitialization, if Gardea Smart Home account is not reachable at startup.
+     * Schedules a reinitialization, if Gardea Smart Home account is not reachable.
      */
-    private void scheduleReinitialize() {
+    @Override
+    public void scheduleReinitialize() {
         scheduler.schedule(() -> {
             initializeGardena();
         }, REINITIALIZE_DELAY_SECONDS, TimeUnit.SECONDS);

@@ -28,6 +28,13 @@ public class Ability {
     private String type;
     private transient Device device;
 
+    public Ability() {
+    }
+
+    public Ability(String name) {
+        this.name = name;
+    }
+
     private List<Property> properties = new ArrayList<>();
 
     /**

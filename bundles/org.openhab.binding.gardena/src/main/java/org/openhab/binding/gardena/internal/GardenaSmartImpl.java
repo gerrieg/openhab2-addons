@@ -12,12 +12,8 @@
  */
 package org.openhab.binding.gardena.internal;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.net.URI;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -34,23 +30,13 @@ import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.openhab.binding.gardena.internal.config.GardenaAttributeWrapper;
 import org.openhab.binding.gardena.internal.config.GardenaConfig;
-import org.openhab.binding.gardena.internal.config.GardenaConfigWrapper;
+import org.openhab.binding.gardena.internal.config.GardenaDataWrapper;
 import org.openhab.binding.gardena.internal.exception.GardenaDeviceNotFoundException;
 import org.openhab.binding.gardena.internal.exception.GardenaException;
 import org.openhab.binding.gardena.internal.exception.GardenaUnauthorizedException;
-import org.openhab.binding.gardena.internal.model.Ability;
-import org.openhab.binding.gardena.internal.model.Device;
-import org.openhab.binding.gardena.internal.model.Devices;
-import org.openhab.binding.gardena.internal.model.Errors;
-import org.openhab.binding.gardena.internal.model.Location;
-import org.openhab.binding.gardena.internal.model.Locations;
-import org.openhab.binding.gardena.internal.model.NoResult;
-import org.openhab.binding.gardena.internal.model.Property;
-import org.openhab.binding.gardena.internal.model.PropertyValue;
-import org.openhab.binding.gardena.internal.model.Session;
-import org.openhab.binding.gardena.internal.model.SessionWrapper;
-import org.openhab.binding.gardena.internal.model.Setting;
+import org.openhab.binding.gardena.internal.model.*;
 import org.openhab.binding.gardena.internal.model.command.Command;
 import org.openhab.binding.gardena.internal.model.command.MowerParkUntilFurtherNoticeCommand;
 import org.openhab.binding.gardena.internal.model.command.MowerParkUntilNextTimerCommand;
@@ -102,6 +88,7 @@ public class GardenaSmartImpl implements GardenaSmart {
 
     private static final String DEVICE_CATEGORY_MOWER = "mower";
     private static final String DEVICE_CATEGORY_GATEWAY = "gateway";
+    private static final String DEVICE_CATEGORY_WATERING_COMPUTER = "watering_computer";
 
     private static final String DEFAULT_MOWER_DURATION = "180";
 
@@ -130,6 +117,7 @@ public class GardenaSmartImpl implements GardenaSmart {
 
     private Map<String, Device> allDevicesById = new HashMap<>();
     private Set<Location> allLocations = new HashSet<>();
+    private GardenaSmartApiImpl gardenaSmartApi;
 
     @Override
     public void init(String id, GardenaConfig config, GardenaSmartEventListener eventListener,
@@ -140,24 +128,29 @@ public class GardenaSmartImpl implements GardenaSmart {
         this.scheduler = scheduler;
 
         if (!config.isValid()) {
-            throw new GardenaException("Invalid config, no email or password specified");
+            throw new GardenaException("Invalid config, no email, password or apiKey specified");
         }
 
         httpClient = new HttpClient(new SslContextFactory(true));
         httpClient.setConnectTimeout(config.getConnectionTimeout() * 1000L);
+        httpClient.setIdleTimeout(httpClient.getConnectTimeout());
 
         try {
             httpClient.start();
+            loadAllDevices();
+            gardenaSmartApi = new GardenaSmartApiImpl(id, config, allLocations, allDevicesById, eventListener, scheduler);
+            gardenaSmartApi.start();
         } catch (Exception ex) {
             throw new GardenaException(ex.getMessage(), ex);
         }
-
-        loadAllDevices();
     }
 
     @Override
     public void dispose() {
         stopRefreshThread(true);
+        if (gardenaSmartApi != null) {
+            gardenaSmartApi.dispose();
+        }
         if (httpClient != null) {
             try {
                 httpClient.stop();
@@ -270,6 +263,17 @@ public class GardenaSmartImpl implements GardenaSmart {
 
                 mower.addProperty(new Property(GardenaSmartCommandName.DURATION_PROPERTY, mowerDuration));
             }
+
+            // adding abilities/properties missing here received via events
+            if (DEVICE_CATEGORY_WATERING_COMPUTER.equals(device.getCategory())) {
+                Ability outlet = new Ability("outlet");
+                device.getAbilities().add(outlet);
+                outlet.addProperty(new Property("valve_open", "off"));
+                outlet.addProperty(new Property("duration", "0"));
+                outlet.addProperty(new Property(PROPERTY_BUTTON_MANUAL_OVERRIDE_TIME, "0"));
+
+            }
+
         }
         return devices;
     }
@@ -500,7 +504,7 @@ public class GardenaSmartImpl implements GardenaSmart {
         if (session == null
                 || session.getCreated() + (config.getSessionTimeout() * 60000) <= System.currentTimeMillis()) {
             logger.trace("(Re)logging in to Gardena Smart Home");
-            session = executeRequest(HttpMethod.POST, URL_LOGIN, new GardenaConfigWrapper(config), SessionWrapper.class)
+            session = executeRequest(HttpMethod.POST, URL_LOGIN, new GardenaDataWrapper(new GardenaAttributeWrapper(config)), SessionWrapper.class)
                     .getSession();
         }
     }

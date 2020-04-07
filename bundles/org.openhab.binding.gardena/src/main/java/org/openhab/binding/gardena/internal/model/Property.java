@@ -44,6 +44,11 @@ public class Property {
         this.value = new PropertyValue(value);
     }
 
+    public Property(String propertyName, String value) {
+        this.name = propertyName;
+        this.value = new PropertyValue(value);
+    }
+
     /**
      * Returns the name of the property.
      */

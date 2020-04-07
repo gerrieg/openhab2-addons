@@ -46,4 +46,8 @@ public interface GardenaSmartEventListener {
      */
     public void onConnectionResumed();
 
+    /**
+     * Schedules a restart.
+     */
+    public void scheduleReinitialize();
 }

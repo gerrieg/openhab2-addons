@@ -29,7 +29,7 @@ import org.openhab.binding.gardena.internal.model.Setting;
 public interface GardenaSmart {
 
     /**
-     * Initializes Gardena Smart Home and loads all devices from all locations.
+     * Initializes Gardena Smart Home.
      */
     public void init(String id, GardenaConfig config, GardenaSmartEventListener eventListener,
             ScheduledExecutorService scheduler) throws GardenaException;

@@ -397,7 +397,7 @@
 		<description>Information about the watering outlet</description>
 		<channels>
 			<channel id="valve_open" typeId="valveOpen" />
-			<channel id="manual_override" typeId="manualOverride" />
+			<channel id="duration" typeId="valveDuration" />
 			<channel id="button_manual_override_time" typeId="buttonManualOverrideTime" />
 		</channels>
 	</channel-group-type>
@@ -465,6 +465,13 @@
 				<option value="undefined">Undefined</option>
 			</options>
 		</state>
+	</channel-type>
+
+	<channel-type id="valveDuration">
+		<item-type>Number</item-type>
+		<label>Watering Time</label>
+		<description>Watering time in seconds</description>
+		<state pattern="%d min" min="1" max="3540" step="1" />
 	</channel-type>
 
 	<!-- ############################### Sensor ############################### -->
