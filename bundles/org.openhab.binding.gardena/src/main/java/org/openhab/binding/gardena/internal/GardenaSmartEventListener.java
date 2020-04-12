@@ -32,11 +32,6 @@ public interface GardenaSmartEventListener {
     public void onNewDevice(Device device);
 
     /**
-     * Called when a device has been deleted.
-     */
-    public void onDeviceDeleted(Device device);
-
-    /**
      * Called when the connection is lost to Gardena Smart Home.
      */
     public void onConnectionLost();
@@ -46,8 +41,4 @@ public interface GardenaSmartEventListener {
      */
     public void onConnectionResumed();
 
-    /**
-     * Schedules a restart.
-     */
-    public void scheduleReinitialize();
 }

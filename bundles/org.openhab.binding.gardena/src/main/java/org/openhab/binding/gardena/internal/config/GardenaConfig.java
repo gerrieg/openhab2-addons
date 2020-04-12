@@ -16,28 +16,20 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * The main Gardena config class.
  *
  * @author Gerhard Riegler - Initial contribution
  */
 public class GardenaConfig {
-
-    private static final Integer DEFAULT_SESSION_TIMEOUT = 30;
     private static final Integer DEFAULT_CONNECTION_TIMEOUT = 10;
-    private static final Integer DEFAULT_REFRESH = 600;
-    private static final Integer DEFAULT_WEBSOCKET_IDLE_TIMEOUT = 900;
+    private static final Integer DEFAULT_WEBSOCKET_IDLE_TIMEOUT = 600;
 
-    @SerializedName("username")
     private String email;
     private String password;
     private String apiKey;
 
-    private transient Integer sessionTimeout = DEFAULT_SESSION_TIMEOUT;
     private transient Integer connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
-    private transient Integer refresh = DEFAULT_REFRESH;
     private transient Integer websocketIdleTimeout = DEFAULT_WEBSOCKET_IDLE_TIMEOUT;
 
     public GardenaConfig() {
@@ -77,20 +69,6 @@ public class GardenaConfig {
     }
 
     /**
-     * Returns the session timeout to Gardena Smart Home.
-     */
-    public int getSessionTimeout() {
-        return sessionTimeout;
-    }
-
-    /**
-     * Sets the session timeout to Gardena Smart Home.
-     */
-    public void setSessionTimeout(int sessionTimeout) {
-        this.sessionTimeout = sessionTimeout;
-    }
-
-    /**
      * Returns the connection timeout to Gardena Smart Home.
      */
     public Integer getConnectionTimeout() {
@@ -102,20 +80,6 @@ public class GardenaConfig {
      */
     public void setConnectionTimeout(Integer connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
-    }
-
-    /**
-     * Returns the refresh interval to fetch new data from Gardena Smart Home.
-     */
-    public Integer getRefresh() {
-        return refresh;
-    }
-
-    /**
-     * Returns the refresh interval to fetch new data from Gardena Smart Home.
-     */
-    public void setRefresh(Integer refresh) {
-        this.refresh = refresh;
     }
 
     /**
@@ -132,10 +96,16 @@ public class GardenaConfig {
         this.websocketIdleTimeout = websocketIdleTimeout;
     }
 
+    /**
+     * Returns the api key.
+     */
     public String getApiKey() {
         return apiKey;
     }
 
+    /**
+     * Sets the api key.
+     */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
@@ -151,8 +121,7 @@ public class GardenaConfig {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("email", email)
                 .append("password", StringUtils.isBlank(password) ? "" : StringUtils.repeat("*", password.length()))
-                .append("sessionTimeout", sessionTimeout).append("connectionTimeout", connectionTimeout)
-                .append("refresh", refresh).append("websocketIdleTimeout", websocketIdleTimeout)
+                .append("connectionTimeout", connectionTimeout).append("websocketIdleTimeout", websocketIdleTimeout)
                 .append("apiKey", apiKey).toString();
     }
 

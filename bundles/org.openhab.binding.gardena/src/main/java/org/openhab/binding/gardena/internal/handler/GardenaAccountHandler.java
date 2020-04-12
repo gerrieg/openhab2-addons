@@ -27,9 +27,11 @@ import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.io.net.http.HttpClientFactory;
+import org.eclipse.smarthome.io.net.http.WebSocketFactory;
 import org.openhab.binding.gardena.internal.GardenaSmart;
-import org.openhab.binding.gardena.internal.GardenaSmartEventListener;
 import org.openhab.binding.gardena.internal.GardenaSmartImpl;
+import org.openhab.binding.gardena.internal.GardenaSmartEventListener;
 import org.openhab.binding.gardena.internal.config.GardenaConfig;
 import org.openhab.binding.gardena.internal.discovery.GardenaDeviceDiscoveryService;
 import org.openhab.binding.gardena.internal.exception.GardenaException;
@@ -44,17 +46,20 @@ import org.slf4j.LoggerFactory;
  * @author Gerhard Riegler - Initial contribution
  */
 public class GardenaAccountHandler extends BaseBridgeHandler implements GardenaSmartEventListener {
-
     private final Logger logger = LoggerFactory.getLogger(GardenaAccountHandler.class);
-    private static final long REINITIALIZE_DELAY_SECONDS = 10;
+    private final static long REINITIALIZE_DELAY_SECONDS = 10;
 
     private GardenaDeviceDiscoveryService discoveryService;
 
     private GardenaSmart gardenaSmart = new GardenaSmartImpl();
     private GardenaConfig gardenaConfig;
+    private HttpClientFactory httpClientFactory;
+    private WebSocketFactory webSocketFactory;
 
-    public GardenaAccountHandler(Bridge bridge) {
+    public GardenaAccountHandler(Bridge bridge, HttpClientFactory httpClientFactory, WebSocketFactory webSocketFactory) {
         super(bridge);
+        this.httpClientFactory = httpClientFactory;
+        this.webSocketFactory = webSocketFactory;
     }
 
     @Override
@@ -79,7 +84,7 @@ public class GardenaAccountHandler extends BaseBridgeHandler implements GardenaS
         scheduler.execute(() -> {
             try {
                 String id = getThing().getUID().getId();
-                gardenaSmart.init(id, gardenaConfig, instance, scheduler);
+                gardenaSmart.init(id, gardenaConfig, instance, scheduler, httpClientFactory, webSocketFactory);
                 discoveryService.startScan(null);
                 discoveryService.waitForScanFinishing();
                 updateStatus(ThingStatus.ONLINE);
@@ -95,8 +100,7 @@ public class GardenaAccountHandler extends BaseBridgeHandler implements GardenaS
     /**
      * Schedules a reinitialization, if Gardea Smart Home account is not reachable.
      */
-    @Override
-    public void scheduleReinitialize() {
+    private void scheduleReinitialize() {
         scheduler.schedule(() -> {
             initializeGardena();
         }, REINITIALIZE_DELAY_SECONDS, TimeUnit.SECONDS);
@@ -113,9 +117,7 @@ public class GardenaAccountHandler extends BaseBridgeHandler implements GardenaS
      */
     private void disposeGardena() {
         logger.debug("Disposing Gardena account '{}'", getThing().getUID().getId());
-
         discoveryService.stopScan();
-
         gardenaSmart.dispose();
     }
 
@@ -150,7 +152,6 @@ public class GardenaAccountHandler extends BaseBridgeHandler implements GardenaS
                 for (Channel channel : gardenaThing.getChannels()) {
                     gardenaThingHandler.updateChannel(channel.getUID());
                 }
-                gardenaThingHandler.updateSettings(device);
                 gardenaThingHandler.updateStatus(device);
             } catch (GardenaException ex) {
                 logger.error("There is something wrong with your thing '{}', please check or recreate it: {}",
@@ -168,13 +169,6 @@ public class GardenaAccountHandler extends BaseBridgeHandler implements GardenaS
             discoveryService.deviceDiscovered(device);
         }
         onDeviceUpdated(device);
-    }
-
-    @Override
-    public void onDeviceDeleted(Device device) {
-        if (discoveryService != null) {
-            discoveryService.deviceRemoved(device);
-        }
     }
 
     @Override

@@ -11,7 +11,7 @@ public interface GardenaSmartWebSocketListener {
     /**
      * This method is called, when the evenRunner stops abnormally (statuscode <> 1000).
      */
-    void connectionClosed();
+    void onClose();
 
     /**
      * This method is called when the Gardena websocket services throws an onError.
@@ -24,6 +24,6 @@ public interface GardenaSmartWebSocketListener {
      *
      * @param msg
      */
-    void onEvent(String msg);
+    void onMessage(String msg);
 
 }
