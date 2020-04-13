@@ -23,14 +23,12 @@ import org.apache.commons.lang.builder.ToStringStyle;
  */
 public class GardenaConfig {
     private static final Integer DEFAULT_CONNECTION_TIMEOUT = 10;
-    private static final Integer DEFAULT_WEBSOCKET_IDLE_TIMEOUT = 600;
 
     private String email;
     private String password;
     private String apiKey;
 
     private transient Integer connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
-    private transient Integer websocketIdleTimeout = DEFAULT_WEBSOCKET_IDLE_TIMEOUT;
 
     public GardenaConfig() {
     }
@@ -83,20 +81,6 @@ public class GardenaConfig {
     }
 
     /**
-     * Return the websocket idle timeout.
-     */
-    public Integer getWebsocketIdleTimeout() {
-        return websocketIdleTimeout;
-    }
-
-    /**
-     * Sets the websocket idle timeout.
-     */
-    public void setWebsocketIdleTimeout(Integer websocketIdleTimeout) {
-        this.websocketIdleTimeout = websocketIdleTimeout;
-    }
-
-    /**
      * Returns the api key.
      */
     public String getApiKey() {
@@ -121,8 +105,7 @@ public class GardenaConfig {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("email", email)
                 .append("password", StringUtils.isBlank(password) ? "" : StringUtils.repeat("*", password.length()))
-                .append("connectionTimeout", connectionTimeout).append("websocketIdleTimeout", websocketIdleTimeout)
-                .append("apiKey", apiKey).toString();
+                .append("connectionTimeout", connectionTimeout).append("apiKey", apiKey).toString();
     }
 
 }

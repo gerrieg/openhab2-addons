@@ -28,14 +28,6 @@
 				<unitLabel>seconds</unitLabel>
 				<default>10</default>
 			</parameter>
-			<parameter name="websocketIdleTimeout" type="integer" min="300" unit="s">
-				<label>WebSocket Idle Timeout</label>
-				<description>The WebSocket is the connection to the Gardena service that listens to status updates. If no data is received over the websocket connection for the given time, the websocket will reconnect</description>
-				<unitLabel>seconds</unitLabel>
-				<advanced>true</advanced>
-				<default>600</default>
-			</parameter>
-
 		</config-description>
 	</bridge-type>
 </thing:thing-descriptions>

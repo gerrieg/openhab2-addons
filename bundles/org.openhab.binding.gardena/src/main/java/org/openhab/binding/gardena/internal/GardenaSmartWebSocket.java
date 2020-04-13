@@ -21,7 +21,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.StatusCode;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
@@ -42,6 +41,7 @@ import org.slf4j.LoggerFactory;
 public class GardenaSmartWebSocket {
     private final Logger logger = LoggerFactory.getLogger(GardenaSmartWebSocket.class);
     private final GardenaSmartWebSocketListener socketEventListener;
+    private final static long WEBSOCKET_IDLE_TIMEOUT = 300;
 
     private Session session;
     private WebSocketClient webSocketClient;
@@ -49,8 +49,7 @@ public class GardenaSmartWebSocket {
     private Instant lastPong;
     private ScheduledExecutorService scheduler;
     private ScheduledFuture pingFuture;
-    private ByteBuffer pingPayload = ByteBuffer.wrap("Ping".getBytes());
-    private GardenaConfig config;
+    private ByteBuffer pingPayload = ByteBuffer.wrap("ping".getBytes());
 
     /**
      * Constructs the {@link GardenaSmartWebSocket}.
@@ -59,7 +58,6 @@ public class GardenaSmartWebSocket {
                                  GardenaConfig config, ScheduledExecutorService scheduler, WebSocketFactory webSocketFactory) throws Exception {
         this.socketEventListener = socketEventListener;
         this.scheduler = scheduler;
-        this.config = config;
 
         webSocketClient = webSocketFactory.createWebSocketClient(String.valueOf(this.getClass().hashCode()));
         webSocketClient.setConnectTimeout(config.getConnectionTimeout() * 1000L);
@@ -98,7 +96,7 @@ public class GardenaSmartWebSocket {
     @OnWebSocketConnect
     public void onConnect(Session session) {
         closing = false;
-        logger.info("Connected to Gardena Webservice");
+        logger.debug("Connected to Gardena Webservice");
 
         pingFuture = scheduler.scheduleAtFixedRate(() -> {
             try {
@@ -106,14 +104,14 @@ public class GardenaSmartWebSocket {
                 session.getRemote().sendPing(pingPayload);
 
                 if (lastPong != null
-                        && Instant.now().getEpochSecond() - lastPong.getEpochSecond() > config.getWebsocketIdleTimeout()) {
+                        && Instant.now().getEpochSecond() - lastPong.getEpochSecond() > WEBSOCKET_IDLE_TIMEOUT) {
                     session.close(1000, "Timeout manually closing dead connection");
                 }
             } catch (IOException ex) {
                 logger.error(ex.getMessage(), ex);
             }
 
-        }, 150, 150, TimeUnit.SECONDS);
+        }, 2, 2, TimeUnit.MINUTES);
     }
 
     @OnWebSocketFrame
@@ -127,19 +125,15 @@ public class GardenaSmartWebSocket {
     @OnWebSocketClose
     public void onClose(int statusCode, String reason) {
         if (!closing) {
-            if (statusCode == StatusCode.NORMAL) {
-                logger.info("Connection to Gardena Webservice was closed normally");
-            } else {
-                logger.info("Connection to Gardena Webservice was closed abnormally (code: {}), reason: {}", statusCode, reason);
-                socketEventListener.onClose();
-            }
+            logger.debug("Connection to Gardena Webservice was closed: code: {}, reason: {}", statusCode, reason);
+            socketEventListener.onClose();
         }
     }
 
     @OnWebSocketError
     public void onError(Throwable cause) {
         if (!closing) {
-            logger.warn("Gardena Webservice error: {}", cause.getMessage());
+            logger.warn("Gardena Webservice error: {}, restarting", cause.getMessage());
             logger.debug(cause.getMessage(), cause);
             socketEventListener.onError(cause);
         }
@@ -147,10 +141,8 @@ public class GardenaSmartWebSocket {
 
     @OnWebSocketMessage
     public void onMessage(String msg) {
-        logger.trace("<<< event: {}", msg);
-        if (closing) {
-            logger.debug("Gardena Webservice event ignored, Webservice is closing");
-        } else {
+        if (!closing) {
+            logger.trace("<<< event: {}", msg);
             socketEventListener.onMessage(msg);
         }
     }

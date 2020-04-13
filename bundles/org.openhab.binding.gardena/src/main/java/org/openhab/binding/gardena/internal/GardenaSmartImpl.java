@@ -246,7 +246,7 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
                 restarting = false;
                 eventListener.onConnectionResumed();
             } catch (Exception ex) {
-                logger.warn("Restarting GardenaSmart failed: {}, try restart in {} seconds", ex.getMessage(), RESTART_DELAY_SECONDS);
+                logger.warn("Restarting GardenaSmart Webservice failed: {}, try restart in {} seconds", ex.getMessage(), RESTART_DELAY_SECONDS);
                 restartScheduledFuture = scheduler.schedule(() -> {
                     restartWebsockets();
                 }, RESTART_DELAY_SECONDS, TimeUnit.SECONDS);
