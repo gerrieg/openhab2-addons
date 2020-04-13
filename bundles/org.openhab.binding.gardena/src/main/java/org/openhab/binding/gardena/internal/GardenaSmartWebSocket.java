@@ -100,7 +100,7 @@ public class GardenaSmartWebSocket {
 
         pingFuture = scheduler.scheduleAtFixedRate(() -> {
             try {
-                logger.debug("Sending ping");
+                logger.trace("Sending ping");
                 session.getRemote().sendPing(pingPayload);
 
                 if (lastPong != null
@@ -118,7 +118,7 @@ public class GardenaSmartWebSocket {
     public void onFrame(Frame pong) {
         if (pong instanceof PongFrame) {
             lastPong = Instant.now();
-            logger.debug("Pong received");
+            logger.trace("Pong received");
         }
     }
 
