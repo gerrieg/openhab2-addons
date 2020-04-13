@@ -131,7 +131,7 @@ public class GardenaThingHandler extends BaseThingHandler {
                     long value = PropertyUtils.getPropertyValue(device, propertyPath, Number.class).longValue();
                     // convert duration from seconds to minutes (MUST be positive multiple of 60)
                     if ("duration".equals(propertyName)) {
-                        value = Math.round(value / 60);
+                        value = Math.round(value / 60.0);
                     }
                     return new DecimalType(value);
                 case "DateTime":
