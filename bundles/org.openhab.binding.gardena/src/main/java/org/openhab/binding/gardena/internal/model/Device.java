@@ -30,56 +30,41 @@ public class Device {
     public void setDataItem(DataItem dataItem) throws GardenaException {
         if (dataItem instanceof DeviceDataItem) {
             deviceType = ((DeviceDataItem) dataItem).getDeviceType();
-        }
-        else if (dataItem instanceof LocationDataItem) {
+        } else if (dataItem instanceof LocationDataItem) {
             LocationDataItem locationDataItem = (LocationDataItem) dataItem;
             if (locationDataItem.attributes != null) {
                 location = locationDataItem.attributes.name;
             }
-        }
-        else if (dataItem instanceof CommonServiceDataItem) {
+        } else if (dataItem instanceof CommonServiceDataItem) {
             common = (CommonServiceDataItem) dataItem;
-        }
-        else if (dataItem instanceof MowerServiceDataItem) {
+        } else if (dataItem instanceof MowerServiceDataItem) {
             mower = (MowerServiceDataItem) dataItem;
-        }
-        else if (dataItem instanceof PowerSocketServiceDataItem) {
+        } else if (dataItem instanceof PowerSocketServiceDataItem) {
             powerSocket = (PowerSocketServiceDataItem) dataItem;
-        }
-        else if (dataItem instanceof SensorServiceDataItem) {
+        } else if (dataItem instanceof SensorServiceDataItem) {
             sensor = (SensorServiceDataItem) dataItem;
-        }
-        else if (dataItem instanceof ValveSetServiceDataItem) {
+        } else if (dataItem instanceof ValveSetServiceDataItem) {
             valveSet = (ValveSetServiceDataItem) dataItem;
-        }
-        else if (dataItem instanceof ValveServiceDataItem) {
+        } else if (dataItem instanceof ValveServiceDataItem) {
             String valveNumber = StringUtils.substringAfterLast(dataItem.id, ":");
             if (valveNumber.equals("") || valveNumber.equals("wc") || valveNumber.equals("0")) {
                 valve = (ValveServiceDataItem) dataItem;
-            }
-            else if ("1".equals(valveNumber)) {
+            } else if ("1".equals(valveNumber)) {
                 valve_1 = (ValveServiceDataItem) dataItem;
-            }
-            else if ("2".equals(valveNumber)) {
+            } else if ("2".equals(valveNumber)) {
                 valve_2 = (ValveServiceDataItem) dataItem;
-            }
-            else if ("3".equals(valveNumber)) {
+            } else if ("3".equals(valveNumber)) {
                 valve_3 = (ValveServiceDataItem) dataItem;
-            }
-            else if ("4".equals(valveNumber)) {
+            } else if ("4".equals(valveNumber)) {
                 valve_4 = (ValveServiceDataItem) dataItem;
-            }
-            else if ("5".equals(valveNumber)) {
+            } else if ("5".equals(valveNumber)) {
                 valve_5 = (ValveServiceDataItem) dataItem;
-            }
-            else if ("6".equals(valveNumber)) {
+            } else if ("6".equals(valveNumber)) {
                 valve_6 = (ValveServiceDataItem) dataItem;
-            }
-            else {
+            } else {
                 throw new GardenaException("Unknown valveNumber in dataItem with id: " + dataItem.id);
             }
-        }
-        else {
+        } else {
             throw new GardenaException("Unknown dataItem with id: " + dataItem.id);
         }
     }
@@ -97,6 +82,4 @@ public class Device {
         Device comp = (Device) obj;
         return new EqualsBuilder().append(comp.id, id).isEquals();
     }
-
 }
-

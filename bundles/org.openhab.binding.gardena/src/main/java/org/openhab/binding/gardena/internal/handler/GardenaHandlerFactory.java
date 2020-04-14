@@ -12,7 +12,8 @@
  */
 package org.openhab.binding.gardena.internal.handler;
 
-import static org.openhab.binding.gardena.internal.GardenaBindingConstants.*;
+import static org.openhab.binding.gardena.internal.GardenaBindingConstants.BINDING_ID;
+import static org.openhab.binding.gardena.internal.GardenaBindingConstants.THING_TYPE_ACCOUNT;
 
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -38,7 +39,7 @@ public class GardenaHandlerFactory extends BaseThingHandlerFactory {
 
     @Activate
     public GardenaHandlerFactory(final @Reference HttpClientFactory httpClientFactory,
-                                 final @Reference WebSocketFactory webSocketFactory) {
+            final @Reference WebSocketFactory webSocketFactory) {
         this.httpClientFactory = httpClientFactory;
         this.webSocketFactory = webSocketFactory;
     }

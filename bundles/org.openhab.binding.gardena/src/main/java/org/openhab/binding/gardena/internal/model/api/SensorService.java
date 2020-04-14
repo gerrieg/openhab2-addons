@@ -5,5 +5,4 @@ public class SensorService {
     public TimestampedIntegerValue soilTemperature;
     public TimestampedIntegerValue ambientTemperature;
     public TimestampedIntegerValue lightIntensity;
-
 }

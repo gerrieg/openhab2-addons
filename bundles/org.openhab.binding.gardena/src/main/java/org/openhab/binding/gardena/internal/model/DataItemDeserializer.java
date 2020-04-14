@@ -12,10 +12,11 @@
  */
 package org.openhab.binding.gardena.internal.model;
 
-import com.google.gson.*;
-import org.openhab.binding.gardena.internal.model.api.*;
-
 import java.lang.reflect.Type;
+
+import org.openhab.binding.gardena.internal.model.api.DataItem;
+
+import com.google.gson.*;
 
 /**
  * Custom deserializer for Gardena DataItems.
@@ -31,5 +32,4 @@ public class DataItemDeserializer implements JsonDeserializer<DataItem> {
         JsonObject jsonObj = element.getAsJsonObject();
         return gson.fromJson(element, DataItemFactory.create(jsonObj.get("type").getAsString()));
     }
-
 }

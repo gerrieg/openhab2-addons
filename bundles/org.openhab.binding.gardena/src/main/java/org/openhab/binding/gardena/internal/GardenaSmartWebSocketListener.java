@@ -1,7 +1,8 @@
 package org.openhab.binding.gardena.internal;
 
 /**
- * The {@link GardenaSmartWebSocketListener} is called by the {@link GardenaSmartWebSocket} on new Events and if the {@link GardenaSmartWebSocket}
+ * The {@link GardenaSmartWebSocketListener} is called by the {@link GardenaSmartWebSocket} on new Events and if the
+ * {@link GardenaSmartWebSocket}
  * closed the connection.
  *
  * @author Gerhard Riegler - Initial contribution
@@ -19,11 +20,11 @@ public interface GardenaSmartWebSocketListener {
      * @param cause
      */
     void onError(Throwable cause);
+
     /**
      * This method is called, whenever a new event comes from the Gardena service.
      *
      * @param msg
      */
     void onMessage(String msg);
-
 }

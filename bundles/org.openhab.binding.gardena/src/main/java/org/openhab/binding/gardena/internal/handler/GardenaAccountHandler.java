@@ -16,13 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.Channel;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.ThingUID;
+import org.eclipse.smarthome.core.thing.*;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerService;
 import org.eclipse.smarthome.core.types.Command;
@@ -30,8 +24,8 @@ import org.eclipse.smarthome.core.types.RefreshType;
 import org.eclipse.smarthome.io.net.http.HttpClientFactory;
 import org.eclipse.smarthome.io.net.http.WebSocketFactory;
 import org.openhab.binding.gardena.internal.GardenaSmart;
-import org.openhab.binding.gardena.internal.GardenaSmartImpl;
 import org.openhab.binding.gardena.internal.GardenaSmartEventListener;
+import org.openhab.binding.gardena.internal.GardenaSmartImpl;
 import org.openhab.binding.gardena.internal.config.GardenaConfig;
 import org.openhab.binding.gardena.internal.discovery.GardenaDeviceDiscoveryService;
 import org.openhab.binding.gardena.internal.exception.GardenaException;
@@ -56,7 +50,8 @@ public class GardenaAccountHandler extends BaseBridgeHandler implements GardenaS
     private HttpClientFactory httpClientFactory;
     private WebSocketFactory webSocketFactory;
 
-    public GardenaAccountHandler(Bridge bridge, HttpClientFactory httpClientFactory, WebSocketFactory webSocketFactory) {
+    public GardenaAccountHandler(Bridge bridge, HttpClientFactory httpClientFactory,
+            WebSocketFactory webSocketFactory) {
         super(bridge);
         this.httpClientFactory = httpClientFactory;
         this.webSocketFactory = webSocketFactory;
@@ -180,5 +175,4 @@ public class GardenaAccountHandler extends BaseBridgeHandler implements GardenaS
     public void onConnectionResumed() {
         updateStatus(ThingStatus.ONLINE);
     }
-
 }

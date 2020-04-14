@@ -54,8 +54,9 @@ public class GardenaSmartWebSocket {
     /**
      * Constructs the {@link GardenaSmartWebSocket}.
      */
-    public GardenaSmartWebSocket(GardenaSmartWebSocketListener socketEventListener, WebSocketCreatedResponse webSocketCreatedResponse,
-                                 GardenaConfig config, ScheduledExecutorService scheduler, WebSocketFactory webSocketFactory) throws Exception {
+    public GardenaSmartWebSocket(GardenaSmartWebSocketListener socketEventListener,
+            WebSocketCreatedResponse webSocketCreatedResponse, GardenaConfig config, ScheduledExecutorService scheduler,
+            WebSocketFactory webSocketFactory) throws Exception {
         this.socketEventListener = socketEventListener;
         this.scheduler = scheduler;
 

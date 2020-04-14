@@ -24,4 +24,3 @@ public class PostOAuth2Response {
     @SerializedName("token_type")
     public String tokenType;
 }
-

@@ -107,5 +107,4 @@ public class GardenaConfig {
                 .append("password", StringUtils.isBlank(password) ? "" : StringUtils.repeat("*", password.length()))
                 .append("connectionTimeout", connectionTimeout).append("apiKey", apiKey).toString();
     }
-
 }

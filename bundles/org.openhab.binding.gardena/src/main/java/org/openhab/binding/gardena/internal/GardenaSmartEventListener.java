@@ -40,5 +40,4 @@ public interface GardenaSmartEventListener {
      * Called when the connection is resumed to Gardena Smart Home.
      */
     public void onConnectionResumed();
-
 }

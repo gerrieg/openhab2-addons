@@ -107,7 +107,7 @@ public class GardenaDeviceDiscoveryService extends AbstractDiscoveryService
         if (scanFuture == null) {
             scanFuture = scheduler.submit(() -> {
                 GardenaSmart gardena = accountHandler.getGardenaSmart();
-                for (Device device: gardena.getAllDevices()) {
+                for (Device device : gardena.getAllDevices()) {
                     deviceDiscovered(device);
                 }
 
@@ -162,5 +162,4 @@ public class GardenaDeviceDiscoveryService extends AbstractDiscoveryService
             logger.error(ex.getMessage(), ex);
         }
     }
-
 }
