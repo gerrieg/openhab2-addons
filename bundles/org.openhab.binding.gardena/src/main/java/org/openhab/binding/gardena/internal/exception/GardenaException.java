@@ -15,7 +15,7 @@ package org.openhab.binding.gardena.internal.exception;
 import java.io.IOException;
 
 /**
- * Exception if something happens in the communication to Gardena Smart Home.
+ * Exception if something happens in the communication to Gardena smart system.
  *
  * @author Gerhard Riegler - Initial contribution
  */

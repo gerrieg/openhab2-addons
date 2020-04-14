@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link GardenaDeviceDiscoveryService} is used to discover devices that are connected to Gardena Smart Home.
+ * The {@link GardenaDeviceDiscoveryService} is used to discover devices that are connected to Gardena smart system.
  *
  * @author Gerhard Riegler - Initial contribution
  */

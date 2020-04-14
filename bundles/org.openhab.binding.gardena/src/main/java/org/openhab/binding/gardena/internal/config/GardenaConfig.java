@@ -39,42 +39,42 @@ public class GardenaConfig {
     }
 
     /**
-     * Returns the email to connect to Gardena Smart Home.
+     * Returns the email to connect to Gardena smart system.
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * Sets the email to connect to Gardena Smart Home.
+     * Sets the email to connect to Gardena smart system.
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
     /**
-     * Returns the password to connect to Gardena Smart Home.
+     * Returns the password to connect to Gardena smart system.
      */
     public String getPassword() {
         return password;
     }
 
     /**
-     * Sets the password to connect to Gardena Smart Home.
+     * Sets the password to connect to Gardena smart system.
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
     /**
-     * Returns the connection timeout to Gardena Smart Home.
+     * Returns the connection timeout to Gardena smart system.
      */
     public Integer getConnectionTimeout() {
         return connectionTimeout;
     }
 
     /**
-     * Sets the connection timeout to Gardena Smart Home.
+     * Sets the connection timeout to Gardena smart system.
      */
     public void setConnectionTimeout(Integer connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
