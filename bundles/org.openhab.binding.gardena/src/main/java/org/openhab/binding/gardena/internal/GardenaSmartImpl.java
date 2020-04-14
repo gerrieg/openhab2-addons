@@ -90,7 +90,7 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
             httpClient.setIdleTimeout(httpClient.getConnectTimeout());
             httpClient.start();
 
-            token = loadToken();
+            loadToken();
             locationsResponse = loadLocations();
 
             // assemble devices
@@ -188,7 +188,7 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
         }
     }
 
-    public PostOAuth2Response loadToken() throws GardenaException {
+    public void loadToken() throws GardenaException {
         Fields fields = new Fields();
         if (token != null && StringUtils.trimToNull(token.refreshToken) != null) {
             logger.debug("Gardena API login using refreshToken");
@@ -202,7 +202,7 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
         }
         fields.add("client_id", config.getApiKey());
 
-        return executeRequest(HttpMethod.POST, URL_API_TOKEN, fields, PostOAuth2Response.class);
+        token = executeRequest(HttpMethod.POST, URL_API_TOKEN, fields, PostOAuth2Response.class);
     }
 
     private LocationsResponse loadLocations() throws GardenaException {
@@ -248,6 +248,7 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
             eventListener.onConnectionLost();
             stopWebsockets();
             try {
+                loadToken();
                 startWebsockets();
                 restarting = false;
                 eventListener.onConnectionResumed();
