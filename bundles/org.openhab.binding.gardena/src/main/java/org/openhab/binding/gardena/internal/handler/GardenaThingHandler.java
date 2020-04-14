@@ -188,7 +188,8 @@ public class GardenaThingHandler extends BaseThingHandler {
             duration = quantityType.intValue() * 60;
         }
 
-        if ("valve_commands".equals(channelUID.getGroupId())) {
+        if (StringUtils.startsWith(channelUID.getGroupId(), "valve_") &&
+                StringUtils.endsWith(channelUID.getGroupId(), "_commands")) {
             return new ValveCommand(ValveControl.valueOf(commandName), duration);
         }
         else if ("mower_commands".equals(channelUID.getGroupId())) {
