@@ -6,7 +6,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpResponseException;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -90,7 +89,8 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
             httpClient.setIdleTimeout(httpClient.getConnectTimeout());
             httpClient.start();
 
-            loadToken();
+            // initially load access token
+            verifyToken();
             locationsResponse = loadLocations();
 
             // assemble devices
@@ -153,6 +153,7 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
                     .header(HttpHeader.ACCEPT, "application/vnd.api+json").header(HttpHeader.ACCEPT_ENCODING, "gzip");
 
             if (!URL_API_TOKEN.equals(url)) {
+                verifyToken();
                 request.header("Authorization", token.tokenType + " " + token.accessToken);
                 request.header("Authorization-provider", token.provider);
                 request.header("X-Api-Key", config.getApiKey());
@@ -188,21 +189,34 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
         }
     }
 
-    public void loadToken() throws GardenaException {
+    public void verifyToken() throws GardenaException {
         Fields fields = new Fields();
-        if (token != null && StringUtils.trimToNull(token.refreshToken) != null) {
-            logger.debug("Gardena API login using refreshToken");
-            fields.add("grant_type", "refresh_token");
-            fields.add("refresh_token", token.refreshToken);
-        } else {
-            logger.debug("Gardena API login using password");
+        fields.add("client_id", config.getApiKey());
+
+        if (token == null || token.isRefreshTokenExpired()) {
+            // new token
+            logger.debug("Gardena API login using password, reason: {}",
+                    token == null ? "no token available" : "refresh token expired");
             fields.add("grant_type", "password");
             fields.add("username", config.getEmail());
             fields.add("password", config.getPassword());
+            token = executeRequest(HttpMethod.POST, URL_API_TOKEN, fields, PostOAuth2Response.class);
+            token.postProcess();
+            logger.debug(token.toString());
+        } else if (token.isAccessTokenExpired()) {
+            // refresh token
+            logger.debug("Gardena API login using refreshToken, reason: access token expired");
+            fields.add("grant_type", "refresh_token");
+            fields.add("refresh_token", token.refreshToken);
+            PostOAuth2Response tempToken = executeRequest(HttpMethod.POST, URL_API_TOKEN, fields,
+                    PostOAuth2Response.class);
+            token.accessToken = tempToken.accessToken;
+            token.expiresIn = tempToken.expiresIn;
+            token.postProcess();
+            logger.debug(token.toString());
+        } else {
+            logger.debug("Gardena API token valid, {}", token.toString());
         }
-        fields.add("client_id", config.getApiKey());
-
-        token = executeRequest(HttpMethod.POST, URL_API_TOKEN, fields, PostOAuth2Response.class);
     }
 
     private LocationsResponse loadLocations() throws GardenaException {
@@ -248,7 +262,6 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
             eventListener.onConnectionLost();
             stopWebsockets();
             try {
-                loadToken();
                 startWebsockets();
                 restarting = false;
                 eventListener.onConnectionResumed();
