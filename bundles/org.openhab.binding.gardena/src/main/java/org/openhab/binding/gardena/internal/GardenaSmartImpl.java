@@ -63,6 +63,9 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
     private HttpClientFactory httpClientFactory;
     private WebSocketFactory webSocketFactory;
 
+    private Set<Device> devicesToNotify = Collections.synchronizedSet(new HashSet<>());
+    private ScheduledFuture<?> deviceToNotifyFuture;
+
     @Override
     public void init(String id, GardenaConfig config, GardenaSmartEventListener eventListener,
                      ScheduledExecutorService scheduler, HttpClientFactory httpClientFactory,
@@ -220,6 +223,9 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
         if (restartScheduledFuture != null) {
             restartScheduledFuture.cancel(true);
         }
+        if (deviceToNotifyFuture != null) {
+            deviceToNotifyFuture.cancel(true);
+        }
         stopWebsockets();
         restarting = false;
         if (httpClient != null) {
@@ -296,7 +302,19 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
             handleDataItem(dataItem);
             Device device = allDevicesById.get(dataItem.getDeviceId());
             if (device != null) {
-                eventListener.onDeviceUpdated(device);
+                devicesToNotify.add(device);
+
+                // delay the deviceUpdated event to filter multiple events for the same device dataItem property
+                if (deviceToNotifyFuture == null) {
+                    deviceToNotifyFuture = scheduler.schedule(() -> {
+                        deviceToNotifyFuture = null;
+                        Iterator<Device> notifyIterator = devicesToNotify.iterator();
+                        while (notifyIterator.hasNext()) {
+                            eventListener.onDeviceUpdated(notifyIterator.next());
+                            notifyIterator.remove();
+                        }
+                    }, 1, TimeUnit.SECONDS);
+                }
             }
         } catch (Exception ex) {
             logger.warn("Ignoring message: {}", ex.getMessage());
