@@ -1,9 +1,9 @@
 package org.openhab.binding.gardena.internal.util;
 
+import java.lang.reflect.Field;
+
 import org.apache.commons.lang.StringUtils;
 import org.openhab.binding.gardena.internal.exception.GardenaException;
-
-import java.lang.reflect.Field;
 
 public class PropertyUtils {
 
@@ -17,15 +17,17 @@ public class PropertyUtils {
     /**
      * Returns the property value from the object instance, nested properties are possible.
      */
-    public static <T> T getPropertyValue(Object instance, String propertyPath, Class<T> resultClass) throws GardenaException {
+    public static <T> T getPropertyValue(Object instance, String propertyPath, Class<T> resultClass)
+            throws GardenaException {
         String[] properties = StringUtils.split(propertyPath, ".");
-        return getPropertyValue(instance, properties, resultClass,0);
+        return getPropertyValue(instance, properties, resultClass, 0);
     }
 
     /**
      * Iterates through the nested properties and returns the field value.
      */
-    private static <T> T getPropertyValue(Object instance, String[] properties, Class<T> resultClass, int nestedIndex) throws GardenaException {
+    private static <T> T getPropertyValue(Object instance, String[] properties, Class<T> resultClass, int nestedIndex)
+            throws GardenaException {
         if (instance == null) {
             return null;
         }
@@ -36,10 +38,9 @@ public class PropertyUtils {
             if (nestedIndex + 1 < properties.length) {
                 return getPropertyValue(result, properties, resultClass, nestedIndex + 1);
             }
-            return (T)result;
+            return (T) result;
         } catch (Exception ex) {
             throw new GardenaException(ex.getMessage(), ex);
         }
     }
-
 }

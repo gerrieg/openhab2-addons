@@ -13,6 +13,10 @@
 package org.openhab.binding.gardena.internal.handler;
 
 import static org.openhab.binding.gardena.internal.GardenaBindingConstants.*;
+import static org.openhab.binding.gardena.internal.model.command.MowerCommand.MowerControl;
+import static org.openhab.binding.gardena.internal.model.command.PowerSocketCommand.PowerSocketControl;
+import static org.openhab.binding.gardena.internal.model.command.ValveCommand.ValveControl;
+import static org.openhab.binding.gardena.internal.model.command.ValveSetCommand.ValveSetControl;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -42,10 +46,6 @@ import org.openhab.binding.gardena.internal.util.UidUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.openhab.binding.gardena.internal.model.command.ValveCommand.ValveControl;
-import static org.openhab.binding.gardena.internal.model.command.ValveSetCommand.ValveSetControl;
-import static org.openhab.binding.gardena.internal.model.command.MowerCommand.MowerControl;
-import static org.openhab.binding.gardena.internal.model.command.PowerSocketCommand.PowerSocketControl;
 /**
  * The {@link GardenaThingHandler} is responsible for handling commands, which are sent to one of the channels.
  *
@@ -76,8 +76,10 @@ public class GardenaThingHandler extends BaseThingHandler {
      */
     protected void updateProperties(Device device) throws GardenaException {
         Map<String, String> properties = editProperties();
-        properties.put(PROPERTY_SERIALNUMBER, PropertyUtils.getPropertyValue(device,"common.attributes.serial.value", String.class));
-        properties.put(PROPERTY_MODELTYPE, PropertyUtils.getPropertyValue(device,"common.attributes.modelType.value", String.class));
+        properties.put(PROPERTY_SERIALNUMBER,
+                PropertyUtils.getPropertyValue(device, "common.attributes.serial.value", String.class));
+        properties.put(PROPERTY_MODELTYPE,
+                PropertyUtils.getPropertyValue(device, "common.attributes.modelType.value", String.class));
         updateProperties(properties);
     }
 
@@ -112,13 +114,13 @@ public class GardenaThingHandler extends BaseThingHandler {
         String propertyPath = channelUID.getGroupId() + ".attributes.";
         String propertyName = channelUID.getIdWithoutGroup();
         if (propertyName.endsWith("_timestamp")) {
-            propertyPath += propertyName.replace("_",".");
-        }
-        else {
+            propertyPath += propertyName.replace("_", ".");
+        } else {
             propertyPath += propertyName + ".value";
         }
 
-        String acceptedItemType = StringUtils.substringBefore(getThing().getChannel(channelUID.getId()).getAcceptedItemType(), ":");
+        String acceptedItemType = StringUtils
+                .substringBefore(getThing().getChannel(channelUID.getId()).getAcceptedItemType(), ":");
 
         try {
             if (PropertyUtils.isNull(device, propertyPath)) {
@@ -143,7 +145,8 @@ public class GardenaThingHandler extends BaseThingHandler {
             logger.warn("Channel '{}' cannot be updated as device does not contain propertyPath '{}'", channelUID,
                     propertyPath);
         } catch (ClassCastException ex) {
-            logger.warn("Value of propertyPath '{}' can not be casted to {}: {}", propertyPath, acceptedItemType, ex.getMessage());
+            logger.warn("Value of propertyPath '{}' can not be casted to {}: {}", propertyPath, acceptedItemType,
+                    ex.getMessage());
         }
         return null;
     }
@@ -155,17 +158,17 @@ public class GardenaThingHandler extends BaseThingHandler {
             if (RefreshType.REFRESH == command) {
                 logger.debug("Refreshing channel '{}'", channelUID);
                 updateChannel(channelUID);
-            }
-            else if (isOnCommand || command instanceof QuantityType) {
+            } else if (isOnCommand || command instanceof QuantityType) {
                 GardenaCommand gardenaCommand = getGardenaCommand(channelUID, command);
                 if (gardenaCommand != null) {
-                    logger.debug("Received Gardena command: {}, {}", gardenaCommand.getClass().getSimpleName(), gardenaCommand.attributes.command);
+                    logger.debug("Received Gardena command: {}, {}", gardenaCommand.getClass().getSimpleName(),
+                            gardenaCommand.attributes.command);
 
                     String dataItemProperty = StringUtils.substringBeforeLast(channelUID.getGroupId(), "_");
                     DataItem dataItem = PropertyUtils.getPropertyValue(getDevice(), dataItemProperty, DataItem.class);
                     getGardenaSmart().sendCommand(dataItem, gardenaCommand);
 
-                    if (isOnCommand){
+                    if (isOnCommand) {
                         scheduler.schedule(() -> {
                             updateState(channelUID, OnOffType.OFF);
                         }, 3, TimeUnit.SECONDS);
@@ -188,17 +191,14 @@ public class GardenaThingHandler extends BaseThingHandler {
             duration = quantityType.intValue() * 60;
         }
 
-        if (StringUtils.startsWith(channelUID.getGroupId(), "valve_") &&
-                StringUtils.endsWith(channelUID.getGroupId(), "_commands")) {
+        if (StringUtils.startsWith(channelUID.getGroupId(), "valve_")
+                && StringUtils.endsWith(channelUID.getGroupId(), "_commands")) {
             return new ValveCommand(ValveControl.valueOf(commandName), duration);
-        }
-        else if ("mower_commands".equals(channelUID.getGroupId())) {
+        } else if ("mower_commands".equals(channelUID.getGroupId())) {
             return new MowerCommand(MowerControl.valueOf(commandName), duration);
-        }
-        else if ("valveSet_commands".equals(channelUID.getGroupId())) {
+        } else if ("valveSet_commands".equals(channelUID.getGroupId())) {
             return new ValveSetCommand(ValveSetControl.valueOf(commandName));
-        }
-        else if ("powerSocket_commands".equals(channelUID.getGroupId())) {
+        } else if ("powerSocket_commands".equals(channelUID.getGroupId())) {
             return new PowerSocketCommand(PowerSocketControl.valueOf(commandName), duration);
         }
         throw new GardenaException("Command " + channelUID.getId() + " not found");
@@ -243,5 +243,4 @@ public class GardenaThingHandler extends BaseThingHandler {
 
         return ((GardenaAccountHandler) getBridge().getHandler()).getGardenaSmart();
     }
-
 }

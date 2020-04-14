@@ -7,21 +7,21 @@
     <!-- ############################### Mower ############################### -->
     <thing-type id="mower">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="account" />
+            <bridge-type-ref id="account"/>
         </supported-bridge-type-refs>
 
         <label>Gardena smart SILENO Mower</label>
         <description>Represents any Gardena smart SILENO mower model</description>
 
         <channel-groups>
-            <channel-group id="common" typeId="commonProperties" />
-            <channel-group id="mower" typeId="mowerProperties" />
-            <channel-group id="mower_commands" typeId="mowerCommands" />
+            <channel-group id="common" typeId="commonProperties"/>
+            <channel-group id="mower" typeId="mowerProperties"/>
+            <channel-group id="mower_commands" typeId="mowerCommands"/>
         </channel-groups>
         <properties>
             <!-- common -->
-            <property name="serial" />
-            <property name="modelType" />
+            <property name="serial"/>
+            <property name="modelType"/>
         </properties>
     </thing-type>
 
@@ -29,23 +29,23 @@
 
     <thing-type id="watering_computer">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="account" />
+            <bridge-type-ref id="account"/>
         </supported-bridge-type-refs>
 
         <label>Gardena smart Water Control</label>
         <description>Represents a Gardena smart Water Control</description>
 
         <channel-groups>
-            <channel-group id="common" typeId="commonProperties" />
-            <channel-group id="valve" typeId="valveProperties" />
-            <channel-group id="valve_commands" typeId="valveCommands" />
-            <channel-group id="valveSet" typeId="valveSetProperties" />
-            <channel-group id="valveSet_commands" typeId="valveSetCommands" />
+            <channel-group id="common" typeId="commonProperties"/>
+            <channel-group id="valve" typeId="valveProperties"/>
+            <channel-group id="valve_commands" typeId="valveCommands"/>
+            <channel-group id="valveSet" typeId="valveSetProperties"/>
+            <channel-group id="valveSet_commands" typeId="valveSetCommands"/>
         </channel-groups>
         <properties>
             <!-- common -->
-            <property name="serial" />
-            <property name="modelType" />
+            <property name="serial"/>
+            <property name="modelType"/>
         </properties>
     </thing-type>
 
@@ -53,20 +53,20 @@
 
     <thing-type id="sensor">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="account" />
+            <bridge-type-ref id="account"/>
         </supported-bridge-type-refs>
 
         <label>Gardena smart Sensor</label>
         <description>Represents a Gardena smart Sensor</description>
 
         <channel-groups>
-            <channel-group id="common" typeId="commonProperties" />
-            <channel-group id="sensor" typeId="sensorProperties" />
+            <channel-group id="common" typeId="commonProperties"/>
+            <channel-group id="sensor" typeId="sensorProperties"/>
         </channel-groups>
         <properties>
             <!-- common -->
-            <property name="serial" />
-            <property name="modelType" />
+            <property name="serial"/>
+            <property name="modelType"/>
         </properties>
     </thing-type>
 
@@ -74,21 +74,21 @@
 
     <thing-type id="electronic_pressure_pump">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="account" />
+            <bridge-type-ref id="account"/>
         </supported-bridge-type-refs>
 
         <label>Gardena smart Pressure Pump</label>
         <description>Represents a Gardena smart Pressure Pump</description>
 
         <channel-groups>
-            <channel-group id="common" typeId="commonProperties" />
-            <channel-group id="valve" typeId="valveProperties" />
-            <channel-group id="valve_commands" typeId="valveCommands" />
+            <channel-group id="common" typeId="commonProperties"/>
+            <channel-group id="valve" typeId="valveProperties"/>
+            <channel-group id="valve_commands" typeId="valveCommands"/>
         </channel-groups>
         <properties>
             <!-- common -->
-            <property name="serial" />
-            <property name="modelType" />
+            <property name="serial"/>
+            <property name="modelType"/>
         </properties>
     </thing-type>
 
@@ -96,21 +96,21 @@
 
     <thing-type id="power_socket">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="account" />
+            <bridge-type-ref id="account"/>
         </supported-bridge-type-refs>
 
         <label>Gardena smart Power Adapter</label>
         <description>Represents a Gardena smart Power Adapter</description>
 
         <channel-groups>
-            <channel-group id="common" typeId="commonProperties" />
-            <channel-group id="powerSocket" typeId="powerSocketProperties" />
-            <channel-group id="powerSocket_commands" typeId="powerSocketCommands" />
+            <channel-group id="common" typeId="commonProperties"/>
+            <channel-group id="powerSocket" typeId="powerSocketProperties"/>
+            <channel-group id="powerSocket_commands" typeId="powerSocketCommands"/>
         </channel-groups>
         <properties>
             <!-- common -->
-            <property name="serial" />
-            <property name="modelType" />
+            <property name="serial"/>
+            <property name="modelType"/>
         </properties>
     </thing-type>
 
@@ -118,14 +118,14 @@
 
     <thing-type id="irrigation_control">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="account" />
+            <bridge-type-ref id="account"/>
         </supported-bridge-type-refs>
 
         <label>Gardena smart Irrigation Control</label>
         <description>Represents a Gardena smart Irrigation Control</description>
 
         <channel-groups>
-            <channel-group id="common" typeId="commonProperties" />
+            <channel-group id="common" typeId="commonProperties"/>
             <channel-group id="valve_1" typeId="valveProperties">
                 <label>Valve 1 Properties</label>
             </channel-group>
@@ -162,13 +162,13 @@
             <channel-group id="valve_6_commands" typeId="valveCommands">
                 <label>Valve 6 Commands</label>
             </channel-group>
-            <channel-group id="valveSet" typeId="valveSetProperties" />
-            <channel-group id="valveSet_commands" typeId="valveSetCommands" />
+            <channel-group id="valveSet" typeId="valveSetProperties"/>
+            <channel-group id="valveSet_commands" typeId="valveSetCommands"/>
         </channel-groups>
         <properties>
             <!-- common -->
-            <property name="serial" />
-            <property name="modelType" />
+            <property name="serial"/>
+            <property name="modelType"/>
         </properties>
     </thing-type>
 
@@ -178,11 +178,11 @@
         <label>Valve Set Properties</label>
         <description>Properties of a valve set</description>
         <channels>
-            <channel id="state" typeId="state" />
+            <channel id="state" typeId="state"/>
             <channel id="state_timestamp" typeId="timestamp">
                 <label>State Timestamp</label>
             </channel>
-            <channel id="lastErrorCode" typeId="lastErrorCode" />
+            <channel id="lastErrorCode" typeId="lastErrorCode"/>
             <channel id="lastErrorCode_timestamp" typeId="timestamp">
                 <label>Last Error Code Timestamp</label>
             </channel>
@@ -193,20 +193,20 @@
         <label>Valve Properties</label>
         <description>Properties of a valve</description>
         <channels>
-            <channel id="name" typeId="name" />
-            <channel id="state" typeId="state" />
+            <channel id="name" typeId="name"/>
+            <channel id="state" typeId="state"/>
             <channel id="state_timestamp" typeId="timestamp">
                 <label>State Timestamp</label>
             </channel>
-            <channel id="activity" typeId="activity" />
+            <channel id="activity" typeId="activity"/>
             <channel id="activity_timestamp" typeId="timestamp">
                 <label>Activity Timestamp</label>
             </channel>
-            <channel id="lastErrorCode" typeId="lastErrorCode" />
+            <channel id="lastErrorCode" typeId="lastErrorCode"/>
             <channel id="lastErrorCode_timestamp" typeId="timestamp">
                 <label>Last Error Code Timestamp</label>
             </channel>
-            <channel id="duration" typeId="duration" />
+            <channel id="duration" typeId="duration"/>
         </channels>
     </channel-group-type>
 
@@ -214,7 +214,7 @@
         <label>Sensor Properties</label>
         <description>Properties of a sensor</description>
         <channels>
-            <channel id="soilHumidity" typeId="soilHumidity" />
+            <channel id="soilHumidity" typeId="soilHumidity"/>
             <channel id="soilHumidity_timestamp" typeId="timestamp">
                 <label>Soil Humidity Timestamp</label>
             </channel>
@@ -230,7 +230,7 @@
             <channel id="ambientTemperature_timestamp" typeId="timestamp">
                 <label>Ambient Temperature Timestamp</label>
             </channel>
-            <channel id="lightIntensity" typeId="lightIntensity" />
+            <channel id="lightIntensity" typeId="lightIntensity"/>
             <channel id="lightIntensity_timestamp" typeId="timestamp">
                 <label>Light Intensity Timestamp</label>
             </channel>
@@ -241,19 +241,19 @@
         <label>Power Socket Properties</label>
         <description>Properties of a power socket</description>
         <channels>
-            <channel id="state" typeId="state" />
+            <channel id="state" typeId="state"/>
             <channel id="state_timestamp" typeId="timestamp">
                 <label>State Timestamp</label>
             </channel>
-            <channel id="activity" typeId="activity" />
+            <channel id="activity" typeId="activity"/>
             <channel id="activity_timestamp" typeId="timestamp">
                 <label>Activity Timestamp</label>
             </channel>
-            <channel id="lastErrorCode" typeId="lastErrorCode" />
+            <channel id="lastErrorCode" typeId="lastErrorCode"/>
             <channel id="lastErrorCode_timestamp" typeId="timestamp">
                 <label>Last Error Code Timestamp</label>
             </channel>
-            <channel id="duration" typeId="duration" />
+            <channel id="duration" typeId="duration"/>
             <channel id="duration_timestamp" typeId="timestamp">
                 <label>Duration Timestamp</label>
             </channel>
@@ -264,19 +264,19 @@
         <label>Mower Properties</label>
         <description>Properties of a mower</description>
         <channels>
-            <channel id="state" typeId="state" />
+            <channel id="state" typeId="state"/>
             <channel id="state_timestamp" typeId="timestamp">
                 <label>State Timestamp</label>
             </channel>
-            <channel id="activity" typeId="activity" />
+            <channel id="activity" typeId="activity"/>
             <channel id="activity_timestamp" typeId="timestamp">
                 <label>Activity Timestamp</label>
             </channel>
-            <channel id="lastErrorCode" typeId="lastErrorCode" />
+            <channel id="lastErrorCode" typeId="lastErrorCode"/>
             <channel id="lastErrorCode_timestamp" typeId="timestamp">
                 <label>Last Error Code Timestamp</label>
             </channel>
-            <channel id="operatingHours" typeId="operatingHours" />
+            <channel id="operatingHours" typeId="operatingHours"/>
         </channels>
     </channel-group-type>
 
@@ -284,20 +284,20 @@
         <label>Common Properties</label>
         <description>Properties that are common across devices</description>
         <channels>
-            <channel id="name" typeId="name" />
-            <channel id="batteryLevel" typeId="system.battery-level" />
+            <channel id="name" typeId="name"/>
+            <channel id="batteryLevel" typeId="system.battery-level"/>
             <channel id="batteryLevel_timestamp" typeId="timestamp">
                 <label>Battery Level Timestamp</label>
             </channel>
-            <channel id="batteryState" typeId="batteryState" />
+            <channel id="batteryState" typeId="batteryState"/>
             <channel id="batteryState_timestamp" typeId="timestamp">
                 <label>Battery State Timestamp</label>
             </channel>
-            <channel id="rfLinkLevel" typeId="system.signal-strength" />
-            <channel id="rfLinkLevel_timestamp" typeId="timestamp" >
+            <channel id="rfLinkLevel" typeId="system.signal-strength"/>
+            <channel id="rfLinkLevel_timestamp" typeId="timestamp">
                 <label>RF Link Level Timestamp</label>
             </channel>
-            <channel id="rfLinkState" typeId="rfLinkState" />
+            <channel id="rfLinkState" typeId="rfLinkState"/>
             <channel id="rfLinkState_timestamp" typeId="timestamp">
                 <label>RF Link State Timestamp</label>
             </channel>
@@ -384,7 +384,7 @@
         <item-type>Number:Time</item-type>
         <label>Command Duration</label>
         <description>A duration in minutes for a command</description>
-        <state pattern="%.0f min"/>
+        <state pattern="%d min"/>
     </channel-type>
 
     <channel-type id="state">
@@ -478,7 +478,7 @@
                 <option value="CONCURRENT_LIMIT_REACHED">Can't open valve because at most 2 valves can be open at the same time</option>
                 <option value="NOT_CONNECTED">No valve was connected</option>
                 <option value="VALVE_CURRENT_MAX_EXCEEDED">The valve has been closed because the valveId is draining more current than allowed</option>
-                <option value="TOTAL_CURRENT_MAX_EXCEEDED"> The valve has been closed because the total current used was more than the allowed maximum</option>
+                <option value="TOTAL_CURRENT_MAX_EXCEEDED">The valve has been closed because the total current used was more than the allowed maximum</option>
                 <option value="WATERING_CANCELED">Watering was canceled</option>
                 <option value="MASTER_VALVE">Master valve is not connected</option>
                 <option value="WATERING_DURATION_TOO_SHORT">Watering duration to short</option>
@@ -489,7 +489,7 @@
 
                 <!-- valve set -->
                 <option value="VOLTAGE_DROP">A voltage drop was detected at the power supply</option>
-                <option value="WRONG_POWER_SUPPLY">Wrong power supply is connected </option>
+                <option value="WRONG_POWER_SUPPLY">Wrong power supply is connected</option>
                 <option value="NO_MCU_CONNECTION">Unable to communicate with secondary MCU</option>
             </options>
         </state>
@@ -499,14 +499,14 @@
         <item-type>DateTime</item-type>
         <label>Timestamp</label>
         <description>Timestamp</description>
-        <state readOnly="true" />
+        <state readOnly="true"/>
     </channel-type>
 
     <channel-type id="name">
         <item-type>String</item-type>
         <label>Name</label>
         <description>The name of the device</description>
-        <state readOnly="true" />
+        <state readOnly="true"/>
     </channel-type>
 
     <channel-type id="activity">
@@ -546,35 +546,35 @@
         <item-type>Number:Time</item-type>
         <label>Duration</label>
         <description>Duration in minutes</description>
-        <state readOnly="true" pattern="%.0f min"/>
+        <state readOnly="true" pattern="%d min"/>
     </channel-type>
 
     <channel-type id="soilHumidity">
         <item-type>Number:Dimensionless</item-type>
         <label>Soil Humidity</label>
         <description>Soil humidity in percent</description>
-        <state readOnly="true" pattern="%.0f %%"/>
+        <state readOnly="true" pattern="%d %unit%"/>
     </channel-type>
 
     <channel-type id="lightIntensity">
         <item-type>Number:Intensity</item-type>
         <label>Light Intensity</label>
         <description>Light intensity in Lux</description>
-        <state readOnly="true" pattern="%.0f Lux"/>
+        <state readOnly="true" pattern="%d %unit%"/>
     </channel-type>
 
     <channel-type id="temperature">
         <item-type>Number:Temperature</item-type>
         <label>Temperature</label>
         <description>The temperature in degrees Celsius</description>
-        <state readOnly="true" pattern="%.0f %unit%" />
+        <state readOnly="true" pattern="%d %unit%"/>
     </channel-type>
 
     <channel-type id="operatingHours">
         <item-type>Number:Time</item-type>
         <label>Operating Hours</label>
         <description>The operating hours</description>
-        <state readOnly="true" pattern="%.0f %unit%" />
+        <state readOnly="true" pattern="%d %unit%"/>
     </channel-type>
 
     <channel-type id="batteryState">

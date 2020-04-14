@@ -20,10 +20,9 @@ import org.eclipse.smarthome.io.net.http.WebSocketFactory;
 import org.openhab.binding.gardena.internal.config.GardenaConfig;
 import org.openhab.binding.gardena.internal.exception.GardenaDeviceNotFoundException;
 import org.openhab.binding.gardena.internal.exception.GardenaException;
+import org.openhab.binding.gardena.internal.model.Device;
 import org.openhab.binding.gardena.internal.model.api.DataItem;
 import org.openhab.binding.gardena.internal.model.command.GardenaCommand;
-import org.openhab.binding.gardena.internal.model.command.GardenaCommandRequest;
-import org.openhab.binding.gardena.internal.model.Device;
 
 /**
  * Describes the methods required for the communication with Gardena smart system.
@@ -36,8 +35,8 @@ public interface GardenaSmart {
      * Initializes Gardena smart system.
      */
     public void init(String id, GardenaConfig config, GardenaSmartEventListener eventListener,
-            ScheduledExecutorService scheduler, HttpClientFactory httpClientFactory,
-                     WebSocketFactory webSocketFactory) throws GardenaException;
+            ScheduledExecutorService scheduler, HttpClientFactory httpClientFactory, WebSocketFactory webSocketFactory)
+            throws GardenaException;
 
     /**
      * Disposes Gardena smart system.

@@ -5,5 +5,4 @@ public class PowerSocketService {
     public TimestampedStringValue state;
     public TimestampedStringValue lastErrorCode;
     public TimestampedIntegerValue duration;
-
 }
