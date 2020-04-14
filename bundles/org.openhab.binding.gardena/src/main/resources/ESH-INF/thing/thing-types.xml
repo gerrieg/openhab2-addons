@@ -10,8 +10,8 @@
             <bridge-type-ref id="account" />
         </supported-bridge-type-refs>
 
-        <label>Gardena Smart Sileno Mower</label>
-        <description>A Gardena Smart Sileno mower</description>
+        <label>Gardena smart SILENO Mower</label>
+        <description>Represents any Gardena smart SILENO mower model</description>
 
         <channel-groups>
             <channel-group id="common" typeId="commonProperties" />
@@ -32,8 +32,8 @@
             <bridge-type-ref id="account" />
         </supported-bridge-type-refs>
 
-        <label>Gardena Smart Watering Computer</label>
-        <description>Represents a Gardena Smart Watering Computer</description>
+        <label>Gardena smart Water Control</label>
+        <description>Represents a Gardena smart Water Control</description>
 
         <channel-groups>
             <channel-group id="common" typeId="commonProperties" />
@@ -56,8 +56,8 @@
             <bridge-type-ref id="account" />
         </supported-bridge-type-refs>
 
-        <label>Gardena Smart Sensor</label>
-        <description>Represents a Gardena Smart Sensor</description>
+        <label>Gardena smart Sensor</label>
+        <description>Represents a Gardena smart Sensor</description>
 
         <channel-groups>
             <channel-group id="common" typeId="commonProperties" />
@@ -77,8 +77,8 @@
             <bridge-type-ref id="account" />
         </supported-bridge-type-refs>
 
-        <label>Gardena Smart Pressure Pump</label>
-        <description>Represents a Gardena Smart Pressure Pump</description>
+        <label>Gardena smart Pressure Pump</label>
+        <description>Represents a Gardena smart Pressure Pump</description>
 
         <channel-groups>
             <channel-group id="common" typeId="commonProperties" />
@@ -99,8 +99,8 @@
             <bridge-type-ref id="account" />
         </supported-bridge-type-refs>
 
-        <label>Gardena Smart Power Plug</label>
-        <description>A Gardena Smart Power Plug</description>
+        <label>Gardena smart Power Adapter</label>
+        <description>Represents a Gardena smart Power Adapter</description>
 
         <channel-groups>
             <channel-group id="common" typeId="commonProperties" />
@@ -121,8 +121,8 @@
             <bridge-type-ref id="account" />
         </supported-bridge-type-refs>
 
-        <label>Gardena Smart Irrigation Control</label>
-        <description>A Gardena Smart Irrigation Control</description>
+        <label>Gardena smart Irrigation Control</label>
+        <description>Represents a Gardena smart Irrigation Control</description>
 
         <channel-groups>
             <channel-group id="common" typeId="commonProperties" />
