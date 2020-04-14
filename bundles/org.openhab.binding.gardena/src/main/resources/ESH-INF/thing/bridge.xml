@@ -3,28 +3,28 @@
 	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-	<!-- Gardena Smart Home Account -->
+	<!-- Gardena smart system Account -->
 	<bridge-type id="account">
-		<label>Gardena Smart Home Account</label>
-		<description>The Gardena Smart Home Account</description>
+		<label>Gardena smart system Account</label>
+		<description>The Gardena smart system Account</description>
 
 		<config-description>
 			<parameter name="email" type="text" required="true">
 				<label>Email</label>
-				<description>Email address for logging in to Gardena Smart Home</description>
+				<description>Email address for logging in to Gardena smart system</description>
 			</parameter>
 			<parameter name="password" type="text" required="true">
 				<label>Password</label>
 				<context>password</context>
-				<description>Password for logging in to Gardena Smart Home</description>
+				<description>Password for logging in to Gardena smart system</description>
 			</parameter>
 			<parameter name="apiKey" type="text" required="true">
 				<label>API Key</label>
-				<description>The Gardena Smart Home API key</description>
+				<description>The Gardena smart system API key</description>
 			</parameter>
 			<parameter name="connectionTimeout" type="integer" min="0" unit="s">
 				<label>Connection Timeout</label>
-				<description>The timeout in seconds for connections to Gardena Smart Home</description>
+				<description>The timeout in seconds for connections to Gardena smart system</description>
 				<unitLabel>seconds</unitLabel>
 				<default>10</default>
 			</parameter>

@@ -26,21 +26,21 @@ import org.openhab.binding.gardena.internal.model.command.GardenaCommandRequest;
 import org.openhab.binding.gardena.internal.model.Device;
 
 /**
- * Describes the methods required for the communication with Gardens Smart Home.
+ * Describes the methods required for the communication with Gardena smart system.
  *
  * @author Gerhard Riegler - Initial contribution
  */
 public interface GardenaSmart {
 
     /**
-     * Initializes Gardena Smart Home.
+     * Initializes Gardena smart system.
      */
     public void init(String id, GardenaConfig config, GardenaSmartEventListener eventListener,
             ScheduledExecutorService scheduler, HttpClientFactory httpClientFactory,
                      WebSocketFactory webSocketFactory) throws GardenaException;
 
     /**
-     * Disposes Gardena Smart Home.
+     * Disposes Gardena smart system.
      */
     public void dispose();
 
@@ -55,7 +55,7 @@ public interface GardenaSmart {
     public Device getDevice(String deviceId) throws GardenaDeviceNotFoundException;
 
     /**
-     * Sends a command to Gardena Smart Home.
+     * Sends a command to Gardena smart system.
      */
     public void sendCommand(DataItem dataItem, GardenaCommand gardenaCommand) throws GardenaException;
 

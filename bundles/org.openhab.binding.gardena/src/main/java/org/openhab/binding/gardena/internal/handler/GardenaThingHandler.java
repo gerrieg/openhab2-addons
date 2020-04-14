@@ -230,7 +230,7 @@ public class GardenaThingHandler extends BaseThingHandler {
     }
 
     /**
-     * Returns the Gardena Smart Home implementation if the bridge is available.
+     * Returns the Gardena smart system implementation if the bridge is available.
      */
     private GardenaSmart getGardenaSmart() throws AccountHandlerNotAvailableException {
         if (getBridge() == null || getBridge().getHandler() == null

@@ -13,7 +13,7 @@
 package org.openhab.binding.gardena.internal.exception;
 
 /**
- * Exception if a device is not found, this happens if a device is requested and the data from Gardena Smart Home has
+ * Exception if a device is not found, this happens if a device is requested and the data from Gardena smart system has
  * not been loaded.
  *
  * @author Gerhard Riegler - Initial contribution
