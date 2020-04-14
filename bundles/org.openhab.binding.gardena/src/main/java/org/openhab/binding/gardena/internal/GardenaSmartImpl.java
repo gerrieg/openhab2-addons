@@ -189,7 +189,7 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
         }
     }
 
-    public void verifyToken() throws GardenaException {
+    private synchronized void verifyToken() throws GardenaException {
         Fields fields = new Fields();
         fields.add("client_id", config.getApiKey());
 
@@ -259,13 +259,13 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
         if (!restarting) {
             restarting = true;
             logger.debug("Restarting GardenaSmart Webservice");
-            eventListener.onConnectionLost();
             stopWebsockets();
             try {
                 startWebsockets();
                 restarting = false;
                 eventListener.onConnectionResumed();
             } catch (Exception ex) {
+                eventListener.onConnectionLost();
                 logger.warn("Restarting GardenaSmart Webservice failed: {}, try restart in {} seconds", ex.getMessage(),
                         RESTART_DELAY_SECONDS);
                 restartScheduledFuture = scheduler.schedule(() -> {
