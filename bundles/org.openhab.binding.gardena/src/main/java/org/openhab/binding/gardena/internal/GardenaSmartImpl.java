@@ -286,17 +286,17 @@ public class GardenaSmartImpl implements GardenaSmart, GardenaSmartWebSocketList
     }
 
     @Override
-    public void onClose() {
+    public void onWebSocketClose() {
         restartWebsockets();
     }
 
     @Override
-    public void onError(Throwable cause) {
+    public void onWebSocketError(Throwable cause) {
         restartWebsockets();
     }
 
     @Override
-    public void onMessage(String msg) {
+    public void onWebSocketMessage(String msg) {
         try {
             DataItem dataItem = gson.fromJson(msg, DataItem.class);
             handleDataItem(dataItem);

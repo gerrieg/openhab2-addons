@@ -127,7 +127,7 @@ public class GardenaSmartWebSocket {
     public void onClose(int statusCode, String reason) {
         if (!closing) {
             logger.debug("Connection to Gardena Webservice was closed: code: {}, reason: {}", statusCode, reason);
-            socketEventListener.onClose();
+            socketEventListener.onWebSocketClose();
         }
     }
 
@@ -136,7 +136,7 @@ public class GardenaSmartWebSocket {
         if (!closing) {
             logger.warn("Gardena Webservice error: {}, restarting", cause.getMessage());
             logger.debug(cause.getMessage(), cause);
-            socketEventListener.onError(cause);
+            socketEventListener.onWebSocketError(cause);
         }
     }
 
@@ -144,7 +144,7 @@ public class GardenaSmartWebSocket {
     public void onMessage(String msg) {
         if (!closing) {
             logger.trace("<<< event: {}", msg);
-            socketEventListener.onMessage(msg);
+            socketEventListener.onWebSocketMessage(msg);
         }
     }
 }
