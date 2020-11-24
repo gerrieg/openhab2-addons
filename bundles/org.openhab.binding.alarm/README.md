@@ -97,7 +97,7 @@ If you bind the alarm zones this way, you have to feed them manually in rules. Y
 Let's say you have a Homematic window contact and you like to map this contact directly to alarm zone one:
 
 ```java
-Contact Kitchen_Window "Kitchen" { channel="homematic:HMW-Sen-SC-12-FM:ccu:KEQ00*****:1#SENSOR, alarm:controller:home:alarmZone_1" }
+Contact Kitchen_Window "Kitchen" { channel="homematic:HMW-Sen-SC-12-FM:ccu:KEQ00*****:1#SENSOR", channel="alarm:controller:home:alarmZone_1" [profile="follow"] }
 ```
 
 ## Commands
