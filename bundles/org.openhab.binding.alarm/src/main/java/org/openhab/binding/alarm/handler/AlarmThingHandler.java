@@ -13,7 +13,6 @@ import static org.openhab.binding.alarm.AlarmBindingConstants.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.openhab.binding.alarm.internal.AlarmController;
 import org.openhab.binding.alarm.internal.AlarmException;
@@ -24,6 +23,7 @@ import org.openhab.binding.alarm.internal.model.AlarmCommand;
 import org.openhab.binding.alarm.internal.model.AlarmStatus;
 import org.openhab.binding.alarm.internal.model.AlarmZone;
 import org.openhab.binding.alarm.internal.model.AlarmZoneType;
+import org.openhab.binding.alarm.internal.utils.StringUtils;
 import org.openhab.core.config.core.Configuration;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
