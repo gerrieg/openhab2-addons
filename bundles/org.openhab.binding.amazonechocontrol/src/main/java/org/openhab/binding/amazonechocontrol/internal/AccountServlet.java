@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -20,9 +20,7 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -32,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.amazonechocontrol.internal.handler.AccountHandler;
@@ -128,15 +125,18 @@ public class AccountServlet extends HttpServlet {
         doVerb("POST", req, resp);
     }
 
-    void doVerb(String verb, @Nullable HttpServletRequest req, @Nullable HttpServletResponse resp)
-            throws ServletException, IOException {
+    void doVerb(String verb, @Nullable HttpServletRequest req, @Nullable HttpServletResponse resp) throws IOException {
         if (req == null) {
             return;
         }
         if (resp == null) {
             return;
         }
-        String baseUrl = req.getRequestURI().substring(servletUrl.length());
+        String requestUri = req.getRequestURI();
+        if (requestUri == null) {
+            return;
+        }
+        String baseUrl = requestUri.substring(servletUrl.length());
         String uri = baseUrl;
         String queryString = req.getQueryString();
         if (queryString != null && queryString.length() > 0) {
@@ -146,7 +146,12 @@ public class AccountServlet extends HttpServlet {
         Connection connection = this.account.findConnection();
         if (connection != null && uri.equals("/changedomain")) {
             Map<String, String[]> map = req.getParameterMap();
-            String domain = map.get("domain")[0];
+            String[] domainArray = map.get("domain");
+            if (domainArray == null) {
+                logger.warn("Could not determine domain");
+                return;
+            }
+            String domain = domainArray[0];
             String loginData = connection.serializeLoginData();
             Connection newConnection = new Connection(null, this.gson);
             if (newConnection.tryRestoreLogin(loginData, domain)) {
@@ -192,15 +197,20 @@ public class AccountServlet extends HttpServlet {
 
             postDataBuilder.append(name);
             postDataBuilder.append('=');
-            String value = map.get(name)[0];
+            String value = "";
             if (name.equals("failedSignInCount")) {
                 value = "ape:AA==";
+            } else {
+                String[] strings = map.get(name);
+                if (strings != null && strings.length > 0 && strings[0] != null) {
+                    value = strings[0];
+                }
             }
             postDataBuilder.append(URLEncoder.encode(value, StandardCharsets.UTF_8.name()));
         }
 
         uri = req.getRequestURI();
-        if (!uri.startsWith(servletUrl)) {
+        if (uri == null || !uri.startsWith(servletUrl)) {
             returnError(resp, "Invalid request uri '" + uri + "'");
             return;
         }
@@ -221,15 +231,18 @@ public class AccountServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(@Nullable HttpServletRequest req, @Nullable HttpServletResponse resp)
-            throws ServletException, IOException {
+    protected void doGet(@Nullable HttpServletRequest req, @Nullable HttpServletResponse resp) throws IOException {
         if (req == null) {
             return;
         }
         if (resp == null) {
             return;
         }
-        String baseUrl = req.getRequestURI().substring(servletUrl.length());
+        String requestUri = req.getRequestURI();
+        if (requestUri == null) {
+            return;
+        }
+        String baseUrl = requestUri.substring(servletUrl.length());
         String uri = baseUrl;
         String queryString = req.getQueryString();
         if (queryString != null && queryString.length() > 0) {
@@ -312,7 +325,7 @@ public class AccountServlet extends HttpServlet {
 
             String html = connection.getLoginPage();
             returnHtml(connection, resp, html, "amazon.com");
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | InterruptedException e) {
             logger.warn("get failed with uri syntax error", e);
         }
     }
@@ -378,10 +391,10 @@ public class AccountServlet extends HttpServlet {
         html.append(servletUrl);
         html.append("/changeDomain'>Change</a>");
 
-        // paper ui link
-        html.append("<br><a href='/paperui/index.html#/configuration/things/view/" + BINDING_ID + ":"
+        // Main UI link
+        html.append("<br><a href='/#!/settings/things/" + BINDING_ID + ":"
                 + URLEncoder.encode(THING_TYPE_ACCOUNT.getId(), "UTF8") + ":" + URLEncoder.encode(id, "UTF8") + "'>");
-        html.append(StringEscapeUtils.escapeHtml("Check Thing in Paper UI"));
+        html.append(StringEscapeUtils.escapeHtml("Check Thing in Main UI"));
         html.append("</a><br><br>");
 
         // device list
@@ -419,7 +432,8 @@ public class AccountServlet extends HttpServlet {
         createPageEndAndSent(resp, html);
     }
 
-    private void handleDevices(HttpServletResponse resp, Connection connection) throws IOException, URISyntaxException {
+    private void handleDevices(HttpServletResponse resp, Connection connection)
+            throws IOException, URISyntaxException, InterruptedException {
         returnHtml(connection, resp,
                 "<html>" + StringEscapeUtils.escapeHtml(connection.getDeviceListJson()) + "</html>");
     }
@@ -435,13 +449,13 @@ public class AccountServlet extends HttpServlet {
         StringBuilder html = new StringBuilder();
         html.append("<html><head><title>"
                 + StringEscapeUtils.escapeHtml(BINDING_NAME + " - " + this.account.getThing().getLabel()));
-        if (StringUtils.isNotEmpty(title)) {
+        if (!title.isEmpty()) {
             html.append(" - ");
             html.append(StringEscapeUtils.escapeHtml(title));
         }
         html.append("</title><head><body>");
         html.append("<h1>" + StringEscapeUtils.escapeHtml(BINDING_NAME + " - " + this.account.getThing().getLabel()));
-        if (StringUtils.isNotEmpty(title)) {
+        if (!title.isEmpty()) {
             html.append(" - ");
             html.append(StringEscapeUtils.escapeHtml(title));
         }
@@ -483,28 +497,23 @@ public class AccountServlet extends HttpServlet {
     private void renderCapabilities(Connection connection, Device device, StringBuilder html) {
         html.append("<h2>Capabilities</h2>");
         html.append("<table><tr><th align='left'>Name</th></tr>");
-        String[] capabilities = device.capabilities;
-        if (capabilities != null) {
-            for (String capability : capabilities) {
-                html.append("<tr><td>");
-                html.append(StringEscapeUtils.escapeHtml(capability));
-                html.append("</td></tr>");
-            }
-        }
+        device.getCapabilities().forEach(capability -> html.append("<tr><td>")
+                .append(StringEscapeUtils.escapeHtml(capability)).append("</td></tr>"));
         html.append("</table>");
     }
 
     private void renderMusicProviderIdChannel(Connection connection, StringBuilder html) {
-        html.append("<h2>" + StringEscapeUtils.escapeHtml("Channel " + CHANNEL_MUSIC_PROVIDER_ID) + "</h2>");
+        html.append("<h2>").append(StringEscapeUtils.escapeHtml("Channel " + CHANNEL_MUSIC_PROVIDER_ID))
+                .append("</h2>");
         html.append("<table><tr><th align='left'>Name</th><th align='left'>Value</th></tr>");
         List<JsonMusicProvider> musicProviders = connection.getMusicProviders();
         for (JsonMusicProvider musicProvider : musicProviders) {
             List<String> properties = musicProvider.supportedProperties;
             String providerId = musicProvider.id;
             String displayName = musicProvider.displayName;
-            if (properties != null && properties.contains("Alexa.Music.PlaySearchPhrase")
-                    && StringUtils.isNotEmpty(providerId) && StringUtils.equals(musicProvider.availability, "AVAILABLE")
-                    && StringUtils.isNotEmpty(displayName)) {
+            if (properties != null && properties.contains("Alexa.Music.PlaySearchPhrase") && providerId != null
+                    && !providerId.isEmpty() && "AVAILABLE".equals(musicProvider.availability) && displayName != null
+                    && !displayName.isEmpty()) {
                 html.append("<tr><td>");
                 html.append(StringEscapeUtils.escapeHtml(displayName));
                 html.append("</td><td>");
@@ -516,15 +525,16 @@ public class AccountServlet extends HttpServlet {
     }
 
     private void renderPlayAlarmSoundChannel(Connection connection, Device device, StringBuilder html) {
-        html.append("<h2>" + StringEscapeUtils.escapeHtml("Channel " + CHANNEL_PLAY_ALARM_SOUND) + "</h2>");
-        JsonNotificationSound[] notificationSounds = null;
+        html.append("<h2>").append(StringEscapeUtils.escapeHtml("Channel " + CHANNEL_PLAY_ALARM_SOUND)).append("</h2>");
+        List<JsonNotificationSound> notificationSounds = List.of();
         String errorMessage = "No notifications sounds found";
         try {
             notificationSounds = connection.getNotificationSounds(device);
-        } catch (IOException | HttpException | URISyntaxException | JsonSyntaxException | ConnectionException e) {
+        } catch (IOException | HttpException | URISyntaxException | JsonSyntaxException | ConnectionException
+                | InterruptedException e) {
             errorMessage = e.getLocalizedMessage();
         }
-        if (notificationSounds != null) {
+        if (!notificationSounds.isEmpty()) {
             html.append("<table><tr><th align='left'>Name</th><th align='left'>Value</th></tr>");
             for (JsonNotificationSound notificationSound : notificationSounds) {
                 if (notificationSound.folder == null && notificationSound.providerId != null
@@ -545,13 +555,15 @@ public class AccountServlet extends HttpServlet {
     }
 
     private void renderAmazonMusicPlaylistIdChannel(Connection connection, Device device, StringBuilder html) {
-        html.append("<h2>" + StringEscapeUtils.escapeHtml("Channel " + CHANNEL_AMAZON_MUSIC_PLAY_LIST_ID) + "</h2>");
+        html.append("<h2>").append(StringEscapeUtils.escapeHtml("Channel " + CHANNEL_AMAZON_MUSIC_PLAY_LIST_ID))
+                .append("</h2>");
 
         JsonPlaylists playLists = null;
         String errorMessage = "No playlists found";
         try {
             playLists = connection.getPlaylists(device);
-        } catch (IOException | HttpException | URISyntaxException | JsonSyntaxException | ConnectionException e) {
+        } catch (IOException | HttpException | URISyntaxException | JsonSyntaxException | ConnectionException
+                | InterruptedException e) {
             errorMessage = e.getLocalizedMessage();
         }
 
@@ -582,7 +594,7 @@ public class AccountServlet extends HttpServlet {
     }
 
     private void renderBluetoothMacChannel(Connection connection, Device device, StringBuilder html) {
-        html.append("<h2>" + StringEscapeUtils.escapeHtml("Channel " + CHANNEL_BLUETOOTH_MAC) + "</h2>");
+        html.append("<h2>").append(StringEscapeUtils.escapeHtml("Channel " + CHANNEL_BLUETOOTH_MAC)).append("</h2>");
         JsonBluetoothStates bluetoothStates = connection.getBluetoothConnectionStates();
         if (bluetoothStates == null) {
             return;
@@ -595,10 +607,11 @@ public class AccountServlet extends HttpServlet {
             if (state == null) {
                 continue;
             }
-            if ((state.deviceSerialNumber == null && device.serialNumber == null)
-                    || (state.deviceSerialNumber != null && state.deviceSerialNumber.equals(device.serialNumber))) {
-                PairedDevice[] pairedDeviceList = state.pairedDeviceList;
-                if (pairedDeviceList != null && pairedDeviceList.length > 0) {
+            String stateDeviceSerialNumber = state.deviceSerialNumber;
+            if ((stateDeviceSerialNumber == null && device.serialNumber == null)
+                    || (stateDeviceSerialNumber != null && stateDeviceSerialNumber.equals(device.serialNumber))) {
+                List<PairedDevice> pairedDeviceList = state.getPairedDeviceList();
+                if (pairedDeviceList.size() > 0) {
                     html.append("<table><tr><th align='left'>Name</th><th align='left'>Value</th></tr>");
                     for (PairedDevice pairedDevice : pairedDeviceList) {
                         html.append("<tr><td>");
@@ -666,7 +679,7 @@ public class AccountServlet extends HttpServlet {
                     return;
                 }
             }
-        } catch (URISyntaxException | ConnectionException e) {
+        } catch (URISyntaxException | ConnectionException | InterruptedException e) {
             returnError(resp, e.getLocalizedMessage());
             return;
         }
