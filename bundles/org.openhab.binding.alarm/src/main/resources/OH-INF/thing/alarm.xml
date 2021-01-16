@@ -82,7 +82,7 @@
 	</channel-type>
 
 	<channel-type id="alarmZone">
-		<item-type>Contact</item-type>
+		<item-type>Switch</item-type>
 		<label>Alarm zone</label>
 		<description>The alarm zone to attach a contact</description>
 		<config-description-ref uri="channel-type:alarm:config"/>

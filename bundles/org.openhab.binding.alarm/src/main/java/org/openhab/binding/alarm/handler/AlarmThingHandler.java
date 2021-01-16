@@ -74,7 +74,7 @@ public class AlarmThingHandler extends BaseThingHandler implements AlarmListener
                     properties.put("type", AlarmZoneType.ACTIVE.toString());
                     Configuration config = new Configuration(properties);
                     ChannelUID channelUid = getAlarmzoneChannelUID(zoneNumber);
-                    channel = ChannelBuilder.create(channelUid, "Contact").withLabel("Alarm zone " + zoneNumber)
+                    channel = ChannelBuilder.create(channelUid, "Switch").withLabel("Alarm zone " + zoneNumber)
                             .withType(channelTypeUid).withConfiguration(config).build();
                     thingBuilder.withChannel(channel);
                 }
@@ -153,14 +153,14 @@ public class AlarmThingHandler extends BaseThingHandler implements AlarmListener
                 if (command instanceof OpenClosedType) {
                     isClosed = command == OpenClosedType.CLOSED;
                 } else if (command instanceof OnOffType) {
-                    isClosed = command == OnOffType.OFF;
+                    isClosed = command == OnOffType.ON;
                 } else if (command instanceof StringType) {
                     isClosed = !"OPEN".equalsIgnoreCase(((StringType) command).toFullString());
                 } else if (command instanceof DecimalType) {
-                    isClosed = ((DecimalType) command).longValue() == 0;
+                    isClosed = ((DecimalType) command).longValue() != 0;
                 } else {
                     throw new AlarmException("Unsupported type " + command.getClass().getSimpleName()
-                            + ", only Contact, Switch, String and Number supported");
+                            + ", only Switch, String and Number supported");
                 }
                 logger.debug("Alarmzone {} received state {}, zone set to {}", channelUID.getId(), command,
                         isClosed ? OpenClosedType.CLOSED : OpenClosedType.OPEN);
