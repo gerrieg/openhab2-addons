@@ -1,6 +1,6 @@
 # Alarm Binding
 
-This is the binding for an alarm controller inspired by [Aritech](https://aritech-security.de) and [Abus](https://www.abus.com)  
+This is the OH3 binding for an alarm controller inspired by [Aritech](https://aritech-security.de) and [Abus](https://www.abus.com)  
 
 The binding is kept very simple and allows you to create alarm controllers with a configurable amount of alarm zones. Each alarm zone has a type like ACTIVE, SABOTAGE, EXIT_ENTRY, ... and you can bind a (Window/Motiondetector/...) Contact to each alarm zone. You can also send some commands to the controller for arming and disarming.
 
@@ -18,7 +18,7 @@ On discovery, the binding creates a default alarm controller
 
 ## Thing Configuration
 
-One alarm controller is created automatically, you can handle it in PaperUI.  
+One alarm controller is created automatically, you can handle it in MainUI.  
 
 You can also configure one or multiple controllers (things) manually:
 
@@ -81,6 +81,8 @@ Available status:
 
 ## Item examples
 
+You must use a Switch for the alarm_Zones.
+
 ```java
 String  Alarm_Status     "Status"           { channel = "alarm:controller:home:status" }
 String  Alarm_Command    "Command"          { channel = "alarm:controller:home:command" }
@@ -89,16 +91,24 @@ Switch  Can_Arm_Internal "Can Arm Internal" { channel = "alarm:controller:home:i
 Switch  Can_Arm_External "Can Arm External" { channel = "alarm:controller:home:externalArmingPossible" }
 Switch  Can_Passthrough  "Can Passthrough"  { channel = "alarm:controller:home:passthroughPossible" }
 
-Contact Alarmzone_1      "Alarmzone_1"      { channel = "alarm:controller:home:alarmZone_1" }
-Contact Alarmzone_2      "Alarmzone_2"      { channel = "alarm:controller:home:alarmZone_2" }
+Switch Alarmzone_1      "Alarmzone_1"      { channel = "alarm:controller:home:alarmZone_1" }
+Switch Alarmzone_2      "Alarmzone_2"      { channel = "alarm:controller:home:alarmZone_2" }
 ```
 
-If you bind the alarm zones this way, you have to feed them manually in rules. You can also bind them directly to real contacts.  
-Let's say you have a Homematic window contact and you like to map this contact directly to alarm zone one:
+If you bind the alarm zones this way, you have to feed them manually in rules. You can also bind them directly to real switches.  
+Let's say you have a window switch and you like to map this switch directly to alarm zone one:
 
 ```java
-Contact Kitchen_Window "Kitchen" { channel="homematic:HMW-Sen-SC-12-FM:ccu:KEQ00*****:1#SENSOR", channel="alarm:controller:home:alarmZone_1" [profile="follow"] }
+Switch Kitchen_Window "Kitchen" { channel=".....", channel="alarm:controller:home:alarmZone_1" [profile="follow"] }
 ```
+
+You can map other types to:
+
+| Type         | Alarm Zone Mapping                                                                                             |
+|--------------|----------------------------------------------------------|
+| ```Switch``` | ```ON``` -> ```CLOSED``` , ```OFF``` -> ```ÒPEN```       |
+| ```String``` | everything != "OPEN" -> ```CLOSED```, else -> ```ÒPEN``` |
+| ```Number``` | != 0 -> ```CLOSED```, else ```ÒPEN```                    |
 
 ## Commands
 
