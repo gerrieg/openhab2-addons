@@ -81,7 +81,7 @@ Available status:
 
 ## Item examples
 
-You must use a Switch for the alarm_Zones.
+You must use a Switch for the alarm_Zones. If the Switch is ```ON```, the alarm zone is closed, ```OFF``` triggers an action when armed.
 
 ```java
 String  Alarm_Status     "Status"           { channel = "alarm:controller:home:status" }
@@ -96,7 +96,7 @@ Switch Alarmzone_2      "Alarmzone_2"      { channel = "alarm:controller:home:al
 ```
 
 If you bind the alarm zones this way, you have to feed them manually in rules. You can also bind them directly to real switches.  
-Let's say you have a window switch and you like to map this switch directly to alarm zone one:
+Let's say you have a window Switch and you like to map this switch directly to alarm zone one:
 
 ```java
 Switch Kitchen_Window "Kitchen" { channel=".....", channel="alarm:controller:home:alarmZone_1" [profile="follow"] }
@@ -105,10 +105,9 @@ Switch Kitchen_Window "Kitchen" { channel=".....", channel="alarm:controller:hom
 You can map other types to:
 
 | Type         | Alarm Zone Mapping                                                                                             |
-|--------------|----------------------------------------------------------|
-| ```Switch``` | ```ON``` -> ```CLOSED``` , ```OFF``` -> ```ÒPEN```       |
-| ```String``` | everything != "OPEN" -> ```CLOSED```, else -> ```ÒPEN``` |
-| ```Number``` | != 0 -> ```CLOSED```, else ```ÒPEN```                    |
+|--------------|---------------------------------------|
+| ```String``` | "OPEN" -> ```OFF```, else -> ```ON``` |
+| ```Number``` | 0 -> ```OFF```, else ```ON```         |
 
 ## Commands
 
