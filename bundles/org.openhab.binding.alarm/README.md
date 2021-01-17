@@ -91,8 +91,8 @@ Number  Alarm_Countdown  "Countdown [%d]"      { channel = "alarm:controller:hom
 Switch  Can_Arm_Internal "Can Arm Internal"    { channel = "alarm:controller:home:internalArmingPossible" }
 Switch  Can_Arm_External "Can Arm External"    { channel = "alarm:controller:home:externalArmingPossible" }
 Switch  Can_Passthrough  "Can Passthrough"     { channel = "alarm:controller:home:passthroughPossible" }
-Number  Temp_Disable_Zone "Temp Disable Zone"  { channel = "alarm:controller:home:tempDisableZone" }
-Number  Temp_Enable_Zone  "Temp Enable Zone"   { channel = "alarm:controller:home:tempEnableZone" }
+Number:Dimensionless  Temp_Disable_Zone "Temp Disable Zone"  { channel = "alarm:controller:home:tempDisableZone" }
+Number:Dimensionless  Temp_Enable_Zone  "Temp Enable Zone"   { channel = "alarm:controller:home:tempEnableZone" }
 
 Switch Alarmzone_1      "Alarmzone_1"      { channel = "alarm:controller:home:alarmZone_1" }
 Switch Alarmzone_2      "Alarmzone_2"      { channel = "alarm:controller:home:alarmZone_2" }
