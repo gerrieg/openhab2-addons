@@ -2,7 +2,7 @@
 
 This is the OH3 binding for an alarm controller inspired by [Aritech](https://aritech-security.de) and [Abus](https://www.abus.com)  
 
-The binding is kept very simple and allows you to create alarm controllers with a configurable amount of alarm zones. Each alarm zone has a type like ACTIVE, SABOTAGE, EXIT_ENTRY, ... and you can bind a (Window/Motiondetector/...) Contact to each alarm zone. You can also send some commands to the controller for arming and disarming.
+The binding allows you to create alarm controllers with a configurable amount of alarm zones. Each alarm zone has a type like ACTIVE, SABOTAGE, EXIT_ENTRY, ... and you can bind a (Window/Motiondetector/...) Switch to each alarm zone. You can also send some commands to the controller for arming and disarming and also temporary disable alarm zones.
 
 ## Supported Bridges
 
@@ -37,6 +37,7 @@ alarm:controller:home [alarmZones=10, entryTime=30, exitTime=30, passthroughTime
 | exitTime        | The time in seconds until arming at exit                                       |
 | passthroughTime | The time in seconds to passthrough a exit/entry alarm zone on internally armed |
 | alarmDelay      | The time in seconds the alarm is delayed                                       |
+| tempDisableTime | The time in seconds, that an alarm zone remains temporary disabled             |
 
 All alarm zone channels have a type. With the alarm zone types you can define the behaviour of the individual alarm zone:
 
@@ -84,12 +85,14 @@ Available status:
 You must use a Switch for the alarm_Zones. If the Switch is ```ON```, the alarm zone is closed, ```OFF``` triggers an action when armed.
 
 ```java
-String  Alarm_Status     "Status"           { channel = "alarm:controller:home:status" }
-String  Alarm_Command    "Command"          { channel = "alarm:controller:home:command" }
-Number  Alarm_Countdown  "Countdown [%d]"   { channel = "alarm:controller:home:countdown" }
-Switch  Can_Arm_Internal "Can Arm Internal" { channel = "alarm:controller:home:internalArmingPossible" }
-Switch  Can_Arm_External "Can Arm External" { channel = "alarm:controller:home:externalArmingPossible" }
-Switch  Can_Passthrough  "Can Passthrough"  { channel = "alarm:controller:home:passthroughPossible" }
+String  Alarm_Status     "Status"              { channel = "alarm:controller:home:status" }
+String  Alarm_Command    "Command"             { channel = "alarm:controller:home:command" }
+Number  Alarm_Countdown  "Countdown [%d]"      { channel = "alarm:controller:home:countdown" }
+Switch  Can_Arm_Internal "Can Arm Internal"    { channel = "alarm:controller:home:internalArmingPossible" }
+Switch  Can_Arm_External "Can Arm External"    { channel = "alarm:controller:home:externalArmingPossible" }
+Switch  Can_Passthrough  "Can Passthrough"     { channel = "alarm:controller:home:passthroughPossible" }
+Number  Temp_Disable_Zone "Temp Disable Zone"  { channel = "alarm:controller:home:tempDisableZone" }
+Number  Temp_Enable_Zone  "Temp Enable Zone"   { channel = "alarm:controller:home:tempEnableZone" }
 
 Switch Alarmzone_1      "Alarmzone_1"      { channel = "alarm:controller:home:alarmZone_1" }
 Switch Alarmzone_2      "Alarmzone_2"      { channel = "alarm:controller:home:alarmZone_2" }
@@ -121,4 +124,26 @@ sendCommand(Alarm_Command, "ARM_EXTERNALLY")
 
 // disarming
 sendCommand(Alarm_Command, "DISARM")
+```
+
+## Temporary disable alarm zones
+
+What's this for? Suppose you have a cleaning robot that starts when you are not at home and the alarm controller is externally armed. If you have motion detectors, the cleaning robot may be detected and an alarm triggered.
+
+Therefore you can temporary disable an alarm zone (e.g of the motion detector) and when the robot has finished its work, you can enable it again. If you 'forget' to enable the alarm zone, it will be automatically enabled after the configured ```tempDisableTime``` of the controller.
+
+```java
+// disable alarm zone 1
+sendCommand(Temp_Disable_Zone, 1)
+
+// enable alarm zone 1
+sendCommand(Temp_Enable_Zone, 1)
+```
+After sending the command, the item will reset to NULL again. In the logfile you can see the disable/enable message.
+
+## Debugging
+
+```java
+// show alarm zone status
+log:set DEBUG org.openhab.binding.alarm.handler
 ```

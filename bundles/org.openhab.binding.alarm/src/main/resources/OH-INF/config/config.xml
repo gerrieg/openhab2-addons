@@ -31,6 +31,12 @@
 			<description>The time in seconds the alarm is delayed</description>
 			<default>30</default>
 		</parameter>
+		<parameter name="tempDisableTime" type="integer" min="1">
+			<label>Temporary disable time</label>
+			<description>The time in seconds, that an alarm zone remains temporary disabled</description>
+			<default>600</default>
+		</parameter>
+
 	</config-description>
 
 	<config-description uri="channel-type:alarm:config">
@@ -46,6 +52,8 @@
 				<option value="SABOTAGE">SABOTAGE</option>
 				<option value="ALWAYS">ALWAYS</option>
 				<option value="ALWAYS_IMMEDIATELY">ALWAYS_IMMEDIATELY</option>
+				<option value="MOTION">MOTION</option>
+				<option value="INTERN_MOTION">INTERN_MOTION</option>
 			</options>
 			<default>ACTIVE</default>
 		</parameter>

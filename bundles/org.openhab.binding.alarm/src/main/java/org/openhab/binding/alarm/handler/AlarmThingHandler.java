@@ -13,6 +13,8 @@ import static org.openhab.binding.alarm.AlarmBindingConstants.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.measure.quantity.Dimensionless;
+
 import org.eclipse.jdt.annotation.NonNull;
 import org.openhab.binding.alarm.internal.AlarmController;
 import org.openhab.binding.alarm.internal.AlarmException;
@@ -25,10 +27,7 @@ import org.openhab.binding.alarm.internal.model.AlarmZone;
 import org.openhab.binding.alarm.internal.model.AlarmZoneType;
 import org.openhab.binding.alarm.internal.utils.StringUtils;
 import org.openhab.core.config.core.Configuration;
-import org.openhab.core.library.types.DecimalType;
-import org.openhab.core.library.types.OnOffType;
-import org.openhab.core.library.types.OpenClosedType;
-import org.openhab.core.library.types.StringType;
+import org.openhab.core.library.types.*;
 import org.openhab.core.thing.Channel;
 import org.openhab.core.thing.ChannelUID;
 import org.openhab.core.thing.Thing;
@@ -39,6 +38,7 @@ import org.openhab.core.thing.binding.builder.ThingBuilder;
 import org.openhab.core.thing.type.ChannelTypeUID;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
+import org.openhab.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +80,7 @@ public class AlarmThingHandler extends BaseThingHandler implements AlarmListener
                 }
                 AlarmZoneConfig alarmZoneConfig = channel.getConfiguration().as(AlarmZoneConfig.class);
                 AlarmZone alarmZone = new AlarmZone(channel.getUID().getId(), alarmZoneConfig);
-                alarm.addAlarmZone(alarmZone);
+                alarm.addOrUpdateAlarmZone(alarmZone);
             }
 
             for (Channel channel : getThing().getChannels()) {
@@ -88,6 +88,7 @@ public class AlarmThingHandler extends BaseThingHandler implements AlarmListener
                     int zoneNumber = getAlarmZoneNumber(channel.getUID());
                     if (zoneNumber > controllerConfig.getAlarmZones()) {
                         thingBuilder.withoutChannel(channel.getUID()); // remove channel
+                        alarm.removeAlarmZone(channel.getUID().getId());
                     }
                 }
             }
@@ -158,6 +159,8 @@ public class AlarmThingHandler extends BaseThingHandler implements AlarmListener
                     isClosed = !"OPEN".equalsIgnoreCase(((StringType) command).toFullString());
                 } else if (command instanceof DecimalType) {
                     isClosed = ((DecimalType) command).longValue() != 0;
+                } else if (command instanceof QuantityType<?>) {
+                    isClosed = ((QuantityType<?>) command).longValue() != 0;
                 } else {
                     throw new AlarmException("Unsupported type " + command.getClass().getSimpleName()
                             + ", only Switch, String and Number supported");
@@ -167,6 +170,24 @@ public class AlarmThingHandler extends BaseThingHandler implements AlarmListener
                 alarm.alarmZoneChanged(channelUID.getId(), isClosed);
             } catch (AlarmException ex) {
                 logger.warn("{}", ex.getMessage());
+            }
+        } else {
+            boolean isTempDisableZone = channelUID.getId().equals(CHANNEL_ID_TEMP_DISABLE_ZONE);
+            boolean isTempEnsableZone = channelUID.getId().equals(CHANNEL_ID_TEMP_ENABLE_ZONE);
+            if (isTempDisableZone || isTempEnsableZone) {
+                String alarmZone = CHANNEL_ID_ALARMZONE
+                        + String.valueOf(((QuantityType<Dimensionless>) command).intValue());
+                try {
+                    if (isTempDisableZone) {
+                        alarm.temporaryDisableZone(alarmZone);
+                    } else {
+                        alarm.enableTemporaryDisabledZone(alarmZone);
+                    }
+                } catch (AlarmException ex) {
+                    logger.warn("{}", ex.getMessage());
+                } finally {
+                    updateState(channelUID, UnDefType.NULL);
+                }
             }
         }
     }

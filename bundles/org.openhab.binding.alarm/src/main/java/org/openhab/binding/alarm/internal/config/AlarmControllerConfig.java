@@ -19,6 +19,7 @@ public class AlarmControllerConfig {
     private int passthroughTime;
     private int alarmDelay;
     private int alarmZones;
+    private int tempDisableTime;
 
     /**
      * Returns the entry time.
@@ -88,5 +89,19 @@ public class AlarmControllerConfig {
      */
     public void setAlarmZones(int alarmZones) {
         this.alarmZones = alarmZones;
+    }
+
+    /**
+     * Returns the time in minutes, that an alarm zone remains temporary disabled.
+     */
+    public int getTempDisableTime() {
+        return tempDisableTime;
+    }
+
+    /**
+     * Sets the time in minutes, that an alarm zone remains temporary disabled.
+     */
+    public void setTempDisableTime(int tempDisableTime) {
+        this.tempDisableTime = tempDisableTime;
     }
 }

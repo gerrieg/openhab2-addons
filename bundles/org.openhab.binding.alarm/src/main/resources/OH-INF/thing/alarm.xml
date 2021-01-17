@@ -15,6 +15,8 @@
 			<channel id="internalArmingPossible" typeId="internalArmingPossible"/>
 			<channel id="externalArmingPossible" typeId="externalArmingPossible"/>
 			<channel id="passthroughPossible" typeId="passthroughPossible"/>
+			<channel id="tempDisableZone" typeId="tempDisableZone"/>
+			<channel id="tempEnableZone" typeId="tempEnableZone"/>
 		</channels>
 		<config-description-ref uri="thing-type:alarm:config"/>
 	</thing-type>
@@ -79,6 +81,20 @@
 		<label>Countdown</label>
 		<description>Countdown</description>
 		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="tempDisableZone">
+		<item-type>Number:Dimensionless</item-type>
+		<label>Temporary disable alarm zone</label>
+		<description>Temporary disables an alarm zone</description>
+		<state min="1"/>
+	</channel-type>
+
+	<channel-type id="tempEnableZone">
+		<item-type>Number:Dimensionless</item-type>
+		<label>Enable temporary disabled alarm zone</label>
+		<description>Enables a temporary disabled alarm zone</description>
+		<state min="1"/>
 	</channel-type>
 
 	<channel-type id="alarmZone">
